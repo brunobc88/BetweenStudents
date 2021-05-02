@@ -1,0 +1,106 @@
+App\Entity\Etat:
+  etat_1:
+    libelle: 'creee'
+  etat_2:
+    libelle: 'ouverte'
+  etat_3:
+    libelle: 'cloturee'
+  etat_4:
+    libelle: 'en_cours'
+  etat_5:
+    libelle: 'terminee'
+  etat_6:
+    libelle: 'annulee'
+
+
+App\Entity\Ville:
+  ville_{1..20}:
+    nom: '<city()>'
+    codePostal: '<numberBetween(0, 9)><numberBetween(0, 9)>000'
+
+
+App\Entity\Campus:
+  campus_1:
+    nom: 'NIORT'
+    ville: '@ville_*'
+  campus_2:
+    nom: 'RENNES'
+    ville: '@ville_*'
+  campus_3:
+    nom: 'LAVAL'
+    ville: '@ville_*'
+  campus_4:
+    nom: 'QUIMPER'
+    ville: '@ville_*'
+  campus_5:
+    nom: 'LE MANS'
+    ville: '@ville_*'
+  campus_6:
+    nom: 'ANGERS'
+    ville: '@ville_*'
+  campus_7:
+    nom: 'NANTES'
+    ville: '@ville_*'
+  campus_8:
+    nom: 'LA ROCHE SUR YON'
+    ville: '@ville_*'
+
+
+App\Entity\User:
+  user_1:
+    email: 'admin@noams88.fr'
+    roles: ['ROLE_ADMIN']
+    #    <shuffle()> permet de passer le caractère $ sans qu'il pense que ce soit une variable
+    password: '<shuffle($)>argon2id<shuffle($)>v=19<shuffle($)>m=65536,t=4,p=1<shuffle($)>UmNWZ2g3WlYzalY5SnJLdw<shuffle($)>LGI3TbsTkH7bWtFbBoOoIdXMA87Z3OFuM2fw+5o86Tc'
+    nom: '<lastName()>'
+    prenom: '<firstName()>'
+    telephone: '<e164PhoneNumber()>'
+    pseudo: 'admin'
+    administrateur: '<numberBetween(1, 1)>'
+    actif: '<numberBetween(1, 1)>'
+    urlImage: 'https://robohash.org/<numberBetween(0, 999)>.png?set=set<numberBetween(1, 4)>'
+    campus: '@campus_*'
+    isVerified: '<numberBetween(1, 1)>'
+  user_{2..200}:
+    email: '<email()>'
+    roles: ['ROLE_USER']
+    password: '<shuffle($)>argon2id<shuffle($)>v=19<shuffle($)>m=65536,t=4,p=1<shuffle($)>UmNWZ2g3WlYzalY5SnJLdw<shuffle($)>LGI3TbsTkH7bWtFbBoOoIdXMA87Z3OFuM2fw+5o86Tc'
+    nom: '<lastName()>'
+    prenom: '<firstName()>'
+    telephone: '80%? <e164PhoneNumber()>'
+    pseudo: '<username()>'
+    administrateur: '<numberBetween(0, 0)>'
+    actif: '<numberBetween(1, 1)>'
+    urlImage: 'https://robohash.org/<numberBetween(0, 999)>.png?set=set<numberBetween(1, 4)>'
+    campus: '@campus_*'
+    isVerified: '<numberBetween(1, 1)>'
+
+
+App\Entity\Sortie:
+  sortie_{1..400}:
+    nom: '<sentence(3, true)>'
+    description: '<paragraph(3, true)>'
+    nbreInscriptionMax: '<numberBetween(2, 20)>'
+    dateDebut: '<dateTimeBetween("-100 days", "+100 days")>'
+    dateClotureInscription: '<dateTimeInInterval($dateDebut, "-10 days")>'
+    duree: '<numberBetween(20, 500)>'
+    rue: '<streetAddress()>'
+    ville: '@ville_*'
+    etat: '@etat_*'
+    participants: '<numberBetween(0, $nbreInscriptionMax)>x @user_*'
+    organisateur: '@user_*'
+    campus: '@campus_*'
+
+
+App\Entity\SortieImage:
+  image_{1..600}:
+    urlImage: 'http://picsum.photos/id/<numberBetween(1,1000)>/400/400'
+    sortie: '@sortie_*'
+
+
+App\Entity\SortieCommentaire:
+  commentaire_{1..1200}:
+    texte: '<paragraph(2, true)>'
+    date: '<dateTimeBetween("now()", "-100 days")>'
+    sortie: '@sortie_*'
+    auteur: '@user_*'
