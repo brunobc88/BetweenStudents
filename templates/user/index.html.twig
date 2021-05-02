@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil {{ user.pseudo }}{% endblock %}
+
+{% block body %}
+
+    <h1>Profil</h1>
+    <p>{{ user.pseudo }}</p>
+    <p>{{ user.prenom }}</p>
+    <p>{{ user.nom }}</p>
+    <p>{{ user.telephone }}</p>
+    <p>{{ user.campus.nom }}</p>
+
+    <img src="{{ user.urlImage }}" alt="">
+
+    <br><br>
+    <a class="ui primary button" href="{{ path('app_user_edit') }}">Modifier</a>
+
+{% endblock %}
