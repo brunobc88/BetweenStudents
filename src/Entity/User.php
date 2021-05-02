@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -26,7 +28,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="json")
      */
-    private $roles = [];
+    private $roles = ['ROLE_USER'];
 
     /**
      * @var string The hashed password
@@ -57,17 +59,48 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $administrateur;
+    private $administrateur = false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $actif;
+    private $actif = true;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $urlImage;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Sortie::class, mappedBy="participants")
+     */
+    private $sortiesAsParticipant;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Sortie::class, mappedBy="organisateur")
+     */
+    private $sortiesAsOrganisateur;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Campus::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $campus;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SortieCommentaire::class, mappedBy="auteur", orphanRemoval=true)
+     */
+    private $commentaires;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public function __construct()
+    {
+        $this->sortiesAsParticipant = new ArrayCollection();
+        $this->sortiesAsOrganisateur = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -230,6 +263,105 @@ class User implements UserInterface
     public function setUrlImage(?string $urlImage): self
     {
         $this->urlImage = $urlImage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Sortie[]
+     */
+    public function getSortiesAsParticipant(): Collection
+    {
+        return $this->sortiesAsParticipant;
+    }
+
+    public function addSortiesAsParticipant(Sortie $sortiesAsParticipant): self
+    {
+        if (!$this->sortiesAsParticipant->contains($sortiesAsParticipant)) {
+            $this->sortiesAsParticipant[] = $sortiesAsParticipant;
+            $sortiesAsParticipant->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSortiesAsParticipant(Sortie $sortiesAsParticipant): self
+    {
+        if ($this->sortiesAsParticipant->removeElement($sortiesAsParticipant)) {
+            $sortiesAsParticipant->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Sortie[]
+     */
+    public function getSortiesAsOrganisateur(): Collection
+    {
+        return $this->sortiesAsOrganisateur;
+    }
+
+    public function addSortiesAsOrganisateur(Sortie $sortiesAsOrganisateur): self
+    {
+        if (!$this->sortiesAsOrganisateur->contains($sortiesAsOrganisateur)) {
+            $this->sortiesAsOrganisateur[] = $sortiesAsOrganisateur;
+            $sortiesAsOrganisateur->setOrganisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSortiesAsOrganisateur(Sortie $sortiesAsOrganisateur): self
+    {
+        if ($this->sortiesAsOrganisateur->removeElement($sortiesAsOrganisateur)) {
+            // set the owning side to null (unless already changed)
+            if ($sortiesAsOrganisateur->getOrganisateur() === $this) {
+                $sortiesAsOrganisateur->setOrganisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCampus(): ?Campus
+    {
+        return $this->campus;
+    }
+
+    public function setCampus(?Campus $campus): self
+    {
+        $this->campus = $campus;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SortieCommentaire[]
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(SortieCommentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(SortieCommentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getAuteur() === $this) {
+                $commentaire->setAuteur(null);
+            }
+        }
 
         return $this;
     }
