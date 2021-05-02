@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortie {{ sortie.nom }}{% endblock %}
+
+{% block body %}
+
+    <h1>{{ sortie.nom }}</h1>
+    <p>{{ sortie.organisateur.pseudo }}</p>
+    <p>{{ sortie.description }}</p>
+    <p>{{ sortie.dateDebut | date('d/M/Y') }}</p>
+    <p>{{ sortie.dateClotureInscription | date('d/M/Y') }}</p>
+    <p>{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} participants</p>
+
+    {% if (app.user in sortie.participants) %}
+        <a class="ui primary button" href="{{ path('app_sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire</a>
+    {% else %}
+        <a class="ui primary button" href="{{ path('app_sortie_subscribe', {'id': sortie.id}) }}">S'inscrire</a>
+    {% endif %}
+    <br><br>
+    <a class="ui primary button">Modifier</a>
+    <br><br>
+    <a class="ui primary button">Annuler</a>
+
+{% endblock %}
+
+
+

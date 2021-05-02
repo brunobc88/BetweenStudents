@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sorties BetweenStudents{% endblock %}
+
+{% block body %}
+
+    <h1>Les sorties</h1>
+
+    <div class="row">
+        {{ form_start(searchSortieFormType) }}
+        {{ form_widget(searchSortieFormType) }}
+        <button class="ui primary button" type="submit">Rechercher</button>
+        {{ form_end(searchSortieFormType) }}
+    </div>
+
+    <br>
+
+    {% if nbreResultats %}
+        <div class="row">
+            <p>{{ nbreResultats }} résultats</p>
+        </div>
+        <div class="row">
+            <div class="ui link cards">
+                {% for sortie in tableauSorties %}
+                    <div class="card">
+                        <a class="image" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
+                            {% if sortie.images is not empty %}
+                                <img src="{{ sortie.images[0].urlImage }}">
+                            {% else %}
+                                <img src="{{ asset('images/divers/no-image-sortie.png') }}">
+                            {% endif %}
+                        </a>
+                        <div class="content">
+                            <div class="header">{{ sortie.organisateur.nom }}</div>
+                            <div class="meta">
+                                <a>{{ sortie.organisateur.pseudo }}</a>
+                                <a>{{ sortie.campus.nom }}</a>
+                                <a>{{ sortie.ville.nom }}</a>
+                                <a>{{ sortie.etat.libelle }}</a>
+                            </div>
+                            <div class="description">
+                                {{ sortie.description | split('', 100)[0] }}
+                                {% if (sortie.description | length) > 100 %}
+                                    ....
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <span class="right floated">Joined in 2013</span>
+                            <span><i class="user icon"></i>{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} participants</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            {{ knp_pagination_render(tableauSorties) }}
+        </div>
+    {% else %}
+        <p>Aucun résultat</p>
+        <a class="positive ui button" href="">Proposer une sortie</a>
+    {% endif %}
+
+
+{% endblock %}
