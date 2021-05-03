@@ -11,7 +11,15 @@
     <p>{{ user.telephone }}</p>
     <p>{{ user.campus.nom }}</p>
 
-    <img src="{{ user.urlImage }}" alt="">
+    {% if user.urlImage %}
+        {% if 'http' in user.urlImage %}
+            <img src="{{ user.urlImage }}" alt="Avatar User">
+        {% else %}
+            <img src="{{ 'images/users/' ~ user.urlImage }}" alt="Avatar User">
+        {% endif %}
+    {% else %}
+        <img src="{{ 'images/divers/no-image-user.png' }}" alt="Avatar User">
+    {% endif %}
 
     <br><br>
     <a class="ui primary button" href="{{ path('app_user_edit') }}">Modifier</a>

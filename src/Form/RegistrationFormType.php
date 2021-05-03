@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -31,6 +32,9 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'max' => 255,
                         'maxMessage' => 'Votre adresse email doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                    new Email([
+                        'message' => 'Format d\'email incorrect',
                     ]),
                 ],
             ])

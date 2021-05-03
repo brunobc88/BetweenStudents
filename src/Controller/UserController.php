@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Form\UserFormType;
+use App\Form\UserEditFormType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -31,12 +31,12 @@ class UserController extends AbstractController
     {
         $user = $userRepository->find($this->getUser());
 
-        $userForm = $this->createForm(UserFormType::class, $user);
+        $userForm = $this->createForm(UserEditFormType::class, $user);
         $userForm = $userForm->handleRequest($request);
 
         if ($userForm->isSubmitted() && $userForm->isValid()) {
             if ($userForm->get('image')->getData()) {
-                if ($user->getUrlImage()) {
+                if ($user->getUrlImage() && !preg_match('#'.'http'.'#', $user->getUrlImage())) {
                     unlink($this->getParameter('image_user_directory') . '/' . $user->getUrlImage());
                 }
 
@@ -45,9 +45,9 @@ class UserController extends AbstractController
                 $image->move($this->getParameter('image_user_directory'), $urlImage);
                 $user->setUrlImage($urlImage);
             }
+            // TODO gérer erreur losque pseudo ou email est null. Constraints NotNull ne marche pas
 
             $entityManager->flush();
-
             $this->addFlash('success', 'Le profil a été modifié');
 
             return $this->redirectToRoute('app_user');

@@ -10,14 +10,31 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class UserFormType extends AbstractType
+class UserEditFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('email', EmailType::class, [
+                'label' => 'Email',
+                'required' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez renseigner votre adresse email',
+                    ]),
+                    new Length([
+                        'max' => 255,
+                        'maxMessage' => 'Votre adresse email doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                    new Email([
+                        'message' => 'Format d\'email incorrect',
+                    ]),
+                ],
+            ])
             ->add('pseudo', null, [
                 'label' => 'Pseudo',
                 'required' => false,
@@ -30,19 +47,6 @@ class UserFormType extends AbstractType
                         'minMessage' => 'Votre pseudo doit contenir au minimum {{ limit }} caractères',
                         'max' => 255,
                         'maxMessage' => 'Votre pseudo doit contenir au maximum {{ limit }} caractères',
-                    ]),
-                ],
-            ])
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'required' => false,
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez renseigner votre adresse email',
-                    ]),
-                    new Length([
-                        'max' => 255,
-                        'maxMessage' => 'Votre adresse email doit contenir au maximum {{ limit }} caractères',
                     ]),
                 ],
             ])

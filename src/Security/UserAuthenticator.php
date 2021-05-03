@@ -73,6 +73,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
         }
+        // TODO gérer messages erreur lors identification erronnées
 
         return $user;
     }
