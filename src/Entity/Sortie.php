@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SortieRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -154,24 +155,24 @@ class Sortie
         return $this;
     }
 
-    public function getDateDebut(): ?\DateTimeInterface
+    public function getDateDebut(): ?DateTimeInterface
     {
         return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTimeInterface $dateDebut): self
+    public function setDateDebut(DateTimeInterface $dateDebut): self
     {
         $this->dateDebut = $dateDebut;
 
         return $this;
     }
 
-    public function getDateClotureInscription(): ?\DateTimeInterface
+    public function getDateClotureInscription(): ?DateTimeInterface
     {
         return $this->dateClotureInscription;
     }
 
-    public function setDateClotureInscription(\DateTimeInterface $dateClotureInscription): self
+    public function setDateClotureInscription(DateTimeInterface $dateClotureInscription): self
     {
         $this->dateClotureInscription = $dateClotureInscription;
 
@@ -202,12 +203,12 @@ class Sortie
         return $this;
     }
 
-    public function getDateAnnulation(): ?\DateTimeInterface
+    public function getDateAnnulation(): ?DateTimeInterface
     {
         return $this->dateAnnulation;
     }
 
-    public function setDateAnnulation(?\DateTimeInterface $dateAnnulation): self
+    public function setDateAnnulation(?DateTimeInterface $dateAnnulation): self
     {
         $this->dateAnnulation = $dateAnnulation;
 

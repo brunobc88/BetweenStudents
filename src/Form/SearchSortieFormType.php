@@ -6,16 +6,13 @@ use App\Entity\Campus;
 use App\Services\SearchSortie;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\ResetType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SearchSortieFormType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -32,10 +29,6 @@ class SearchSortieFormType extends AbstractType
                 'required' => false,
                 'choice_label' => 'nom',
                 'placeholder' => 'Campus'
-            ])
-            ->add('archive', CheckboxType::class, [
-                'label' => 'Sortie terminée',
-                'required' => false,
             ])
             ->add('dateMin', DateType::class, [
                 'label' => 'Entre le ',
@@ -56,5 +49,4 @@ class SearchSortieFormType extends AbstractType
             'data_class' => SearchSortie::class,
         ]);
     }
-
 }

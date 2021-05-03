@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Sortie;
 use App\Services\SearchSortie;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,7 +19,6 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class SortieRepository extends ServiceEntityRepository
 {
-
     private $paginator;
 
     public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
@@ -85,8 +85,8 @@ class SortieRepository extends ServiceEntityRepository
                 ->andWhere('s.etat = 5')
                 ->andWhere('s.dateDebut < :today')
                 ->andWhere('s.dateDebut > :filtre1MonthArchive')
-                ->setParameter('today', new \DateTime())
-                ->setParameter('filtre1MonthArchive', date_modify(new \DateTime(), '-1 month'));
+                ->setParameter('today', new DateTime())
+                ->setParameter('filtre1MonthArchive', date_modify(new DateTime(), '-1 month'));
         }
 
         if (!empty($searchSortie->campus)) {

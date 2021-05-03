@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-
     /**
      * @Route("/user", name="app_user")
      */
@@ -58,5 +57,4 @@ class UserController extends AbstractController
             'userForm' => $userForm->createView(),
         ]);
     }
-
 }
