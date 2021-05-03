@@ -8,7 +8,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends AbstractController
 {
-
     /**
      * @Route("/", name="app_main")
      */
@@ -16,5 +15,4 @@ class MainController extends AbstractController
     {
         return $this->render('main/main.html.twig');
     }
-
 }

@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
 {
-
     /**
      * @Route("/sortie", name="app_sortie")
      */
@@ -26,8 +25,8 @@ class SortieController extends AbstractController
         $searchSortieFormType = $this->createForm(SearchSortieFormType::class, $searchSortie);
         $searchSortieFormType->handleRequest($request);
 
-        $tableauSorties = $sortieRepository->findSearchSortie($searchSortie);
-        $nbreResultats = count($sortieRepository->countSearchSortie($searchSortie));
+        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie);
+        $nbreResultats = count($sortieRepository->findSearchSortie($searchSortie));
 
         return $this->render('sortie/index.html.twig', [
             'searchSortieFormType' => $searchSortieFormType->createView(),
@@ -39,9 +38,14 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/{id}/detail", name="app_sortie_detail")
      */
-    public function detail(int $id, Request $request, SortieRepository $sortieRepository, UserRepository $userRepository): Response
+    public function detail(int $id, SortieRepository $sortieRepository): Response
     {
         $sortie = $sortieRepository->findSortie($id);
+
+        if ($sortie->getEtat()->getId() >= 5) {
+            $this->addFlash('error', 'Cette sortie n\'est plus disponible. Vous ne pouvez plus y accéder');
+            return $this->redirectToRoute('app_sortie');
+        }
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortie,
@@ -75,21 +79,22 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/{id}/subscribe", name="app_sortie_subscribe", requirements={"id"="\d+"})
      */
-    public function subscribe(int $id, SortieRepository $sortieRepository, EntityManagerInterface $entityManager): Response
+    public function subscribe(int $id, SortieRepository $sortieRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
+        $user = $userRepository->find($this->getUser());
         $sortie = $sortieRepository->findSortie($id);
         if (count($sortie->getParticipants()) < $sortie->getNbreInscriptionMax()) {
-            if ($sortie->getDateClotureInscription() > new \DateTime()) {
-                $sortie->addParticipant($this->getUser());
+            if ($sortie->getEtat()->getId() === 2) {
+                $sortie->addParticipant($user);
                 $entityManager->flush();
-                $this->addFlash('success', 'Votre inscription a bien été enregistré !');
+                $this->addFlash('success', 'Votre inscription a bien été enregistrée');
             }
             else {
-                $this->addFlash('error', 'La date limite pour s\'inscrire est dépassée. Vous ne pouvez pas vous y inscrire !');
+                $this->addFlash('error', 'Les inscriptions ne sont pas accessible pour cette sortie. Vous ne pouvez pas vous inscrire');
             }
         }
         else {
-            $this->addFlash('error', 'La sortie est complète. Vous ne pouvez pas vous y inscrire !');
+            $this->addFlash('error', 'La sortie est complète. Vous ne pouvez pas vous inscrire');
         }
 
         return $this->redirectToRoute('app_sortie_detail', ['id' => $id]);
@@ -98,19 +103,19 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/{id}/unsubscribe", name="app_sortie_unsubscribe", requirements={"id"="\d+"})
      */
-    public function unsubscribe(int $id, SortieRepository $sortieRepository, EntityManagerInterface $entityManager): Response
+    public function unsubscribe(int $id, SortieRepository $sortieRepository, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
+        $user = $userRepository->find($this->getUser());
         $sortie = $sortieRepository->findSortie($id);
-        if ($sortie->getDateDebut() > new \DateTime()) {
-            $sortie->removeParticipant($this->getUser());
+        if ($sortie->getEtat()->getId() === 2 || $sortie->getEtat()->getId() === 3) {
+            $sortie->removeParticipant($user);
             $entityManager->flush();
-            $this->addFlash('success', 'Votre désinscription a bien été enregistré !');
+            $this->addFlash('success', 'Votre désinscription a bien été enregistré');
         }
         else {
-            $this->addFlash('error', 'La date limite pour vous désinscrire est dépassée. Vous ne pouvez pas vous y désinscrire !');
+            $this->addFlash('error', 'Les inscriptions ne sont pas accessible pour cette sortie. Vous ne pouvez pas vous désinscrire');
         }
 
         return $this->redirectToRoute('app_sortie_detail', ['id' => $id]);
     }
-
 }

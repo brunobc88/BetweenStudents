@@ -27,18 +27,18 @@ class SortieRepository extends ServiceEntityRepository
         $this->paginator = $paginator;
     }
 
-    public function findSearchSortie(SearchSortie $searchSortie): PaginationInterface
+    public function findSearchSortiePaginate(SearchSortie $searchSortie): PaginationInterface
     {
         $query = $this->getSearchQuerySortie($searchSortie)->getQuery();
         return $this->paginator->paginate($query, $searchSortie->page, 12);
     }
 
-    public function countSearchSortie(SearchSortie $searchSortie)
+    public function findSearchSortie(SearchSortie $searchSortie): array
     {
         return $this->getSearchQuerySortie($searchSortie)->getQuery()->getResult();
     }
 
-    public function findSortie(int $id)
+    public function findSortie(int $id): Sortie
     {
         return $this->createQueryBuilder('s')
             ->select('s', 'o', 'p', 'e', 'v', 'i', 'c')
