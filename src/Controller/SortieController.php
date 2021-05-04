@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Sortie;
 use App\Form\SearchSortieFormType;
+use App\Form\SortieFormType;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Services\SearchSortie;
@@ -55,9 +57,20 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/create", name="app_sortie_create")
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        return $this->render('sortie/create.html.twig');
+        $sortie = new Sortie();
+        $sortieForm = $this->createForm(SortieFormType::class, $sortie);
+        $sortieForm = $sortieForm->handleRequest($request);
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+            return $this->redirectToRoute('app_sortie');
+        }
+        // TODO gérer erreur losque dateDebut ou DateCloture est null. Constraints NotNull ne marche pas
+
+        return $this->render('sortie/create.html.twig', [
+            'sortieForm' => $sortieForm->createView(),
+        ]);
     }
 
     /**
