@@ -2,23 +2,19 @@
 
 namespace App\Form;
 
-use App\Entity\Campus;
 use App\Entity\Sortie;
 use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\AbstractComparison;
-use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\Expression;
-use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
@@ -95,10 +91,6 @@ class SortieFormType extends AbstractType
                         'value' => "tomorrow",
                         'message' => 'La date de clotûre des inscriptions doit débutée après le {{ compared_value }}',
                     ]),
-                    new Expression([
-                        'expression' => '"value" < "dateDebut"',
-                        'message' => 'La date de clotûre des inscriptions doit être avant la date de la sortie',
-                    ]),
                 ],
             ])
             ->add('duree', IntegerType::class, [
@@ -138,16 +130,15 @@ class SortieFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('campus', EntityType::class, [
-                'class' => Campus::class,
-                'label' => 'Campus',
+            ->add('image', FileType::class, [
+                'label' => 'Images',
                 'required' => false,
-                'choice_label' => 'nom',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez renseigner le campus',
-                    ]),
-                ],
+                'mapped' => false,
+            ])
+            ->add('etat', CheckboxType::class, [
+                'label' => 'Publiée',
+                'required' => false,
+                'mapped' => false,
             ])
         ;
     }

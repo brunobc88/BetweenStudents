@@ -72,7 +72,7 @@ class Sortie
     private $ville;
 
     /**
-     * @ORM\OneToMany(targetEntity=SortieImage::class, mappedBy="sortie", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=SortieImage::class, mappedBy="sortie", orphanRemoval=true, cascade="persist")
      */
     private $images;
 

@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Sortie;
+use App\Entity\SortieImage;
 use App\Form\SearchSortieFormType;
 use App\Form\SortieFormType;
+use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Services\SearchSortie;
@@ -57,16 +59,45 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/create", name="app_sortie_create")
      */
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, UserRepository $userRepository): Response
     {
         $sortie = new Sortie();
         $sortieForm = $this->createForm(SortieFormType::class, $sortie);
         $sortieForm = $sortieForm->handleRequest($request);
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
+            if ($sortieForm->get('etat')->getData()) {
+                $etat = $etatRepository->find(2); // état = publiée
+                $reponse = 'publiée';
+            } else {
+                $etat = $etatRepository->find(1); // état = créée
+                $reponse = 'sauvegardée';
+            }
+
+            if ($sortieForm->get('image')->getData()) {
+                $image = $sortieForm->get('image')->getData();
+                $urlImage = md5(uniqid()) . '.' . $image->guessExtension();
+                $image->move($this->getParameter('image_sortie_directory'), $urlImage);
+                $sortieImage = new SortieImage();
+                $sortieImage->setUrlImage($urlImage);
+                $sortie->addImage($sortieImage);
+            }
+
+            // TODO prévoir l'ajout de plusieurs images
+
+            $sortie->setEtat($etat);
+            $user = $userRepository->find($this->getUser());
+            $sortie->setOrganisateur($user);
+            $sortie->setCampus($user->getCampus());
+
+            $entityManager->persist($sortie);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'La sortie a bien été '.$reponse);
             return $this->redirectToRoute('app_sortie');
         }
-        // TODO gérer erreur losque dateDebut ou DateCloture est null. Constraints NotNull ne marche pas
+        // TODO gérer erreur losque dateDebut ou DateCloture est null ou DateCloture après dateDebut. Constraints ne marche pas
 
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $sortieForm->createView(),
