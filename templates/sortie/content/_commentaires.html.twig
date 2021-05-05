@@ -1,0 +1,24 @@
+{% for commentaire in commentaires %}
+    <div class="comment">
+        <a class="avatar">
+            {% if commentaire.auteur.urlImage %}
+                {% if 'http' in commentaire.auteur.urlImage %}
+                    <img src="{{ commentaire.auteur.urlImage }}" alt="Avatar User">
+                {% else %}
+                    <img src="{{ asset('images/users/') ~ commentaire.auteur.urlImage }}" alt="Avatar User">
+                {% endif %}
+            {% else %}
+                <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
+            {% endif %}
+        </a>
+        <div class="content">
+            <a class="author">{{ commentaire.auteur.pseudo }}</a>
+            <div class="metadata">
+                <span class="date">{{ commentaire.date | date('d/m/Y à H:i') }}</span>
+            </div>
+            <div class="text">
+                {{ commentaire.texte }}
+            </div>
+        </div>
+    </div>
+{% endfor %}

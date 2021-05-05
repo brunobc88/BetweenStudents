@@ -2,22 +2,36 @@
 
 namespace App\Controller;
 
+use App\Entity\CommentaireSortie;
 use App\Entity\Sortie;
+use App\Entity\SortieCommentaire;
 use App\Entity\SortieImage;
 use App\Form\SearchSortieFormType;
+use App\Form\SortieDeleteFormType;
 use App\Form\SortieFormType;
 use App\Repository\EtatRepository;
+use App\Repository\SortieCommentaireRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
+use App\Security\EmailVerifier;
 use App\Services\SearchSortie;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
 {
+    private $emailVerifier;
+
+    public function __construct(EmailVerifier $emailVerifier)
+    {
+        $this->emailVerifier = $emailVerifier;
+    }
+
     /**
      * @Route("/sortie", name="app_sortie")
      */
@@ -42,17 +56,39 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/{id}/detail", name="app_sortie_detail")
      */
-    public function detail(int $id, SortieRepository $sortieRepository): Response
+    public function detail(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, SortieCommentaireRepository $sortieCommentaireRepository, UserRepository $userRepository): Response
     {
         $sortie = $sortieRepository->findSortie($id);
+        $commentaires = $sortieCommentaireRepository->findBy(array('sortie' => $id), array('date' => 'DESC'), null, 0);
 
-        if ($sortie->getEtat()->getId() >= 5) {
-            $this->addFlash('error', 'Cette sortie n\'est plus disponible. Vous ne pouvez plus y accéder');
+        if ($sortie->getEtat()->getId() === 1 && $sortie->getOrganisateur() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous ne pouvez pas accéder à cette sortie');
             return $this->redirectToRoute('app_sortie');
+        }
+        if ($sortie->getEtat()->getId() >= 5) {
+            $this->addFlash('error', 'Vous ne pouvez plus accéder à cette sortie');
+            return $this->redirectToRoute('app_sortie');
+        }
+
+        if ($request->get('inputNewCommentaireTexte')) {
+            $newCommentaires = new SortieCommentaire();
+            $newCommentaires->setSortie($sortie);
+            $newCommentaires->setDate(new DateTime());
+            $newCommentaires->setAuteur($userRepository->find($this->getUser()));
+            $newCommentaires->setTexte($request->get("inputNewCommentaireTexte"));
+            $entityManager->persist($newCommentaires);
+            $entityManager->flush();
+
+            $commentaires = $sortieCommentaireRepository->findBy(array('sortie' => $id), array('date' => 'DESC'), null, 0);
+
+            return new JsonResponse([
+                'content' => $this->renderView('sortie/content/_commentaires.html.twig', compact('commentaires'))
+            ]);
         }
 
         return $this->render('sortie/detail.html.twig', [
             'sortie' => $sortie,
+            'commentaires' => $commentaires,
         ]);
     }
 
@@ -67,12 +103,12 @@ class SortieController extends AbstractController
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
 
-            if ($sortieForm->get('etat')->getData()) {
-                $etat = $etatRepository->find(2); // état = publiée
-                $reponse = 'publiée';
-            } else {
+            if (!$sortieForm->get('etat')->getData()) {
                 $etat = $etatRepository->find(1); // état = créée
                 $reponse = 'sauvegardée';
+            } else {
+                $etat = $etatRepository->find(2); // état = publiée
+                $reponse = 'publiée';
             }
 
             if ($sortieForm->get('image')->getData()) {
@@ -107,17 +143,93 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/{id}/edit", name="app_sortie_edit", requirements={"id"="\d+"})
      */
-    public function edit(int $id): Response
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository, UserRepository $userRepository): Response
     {
-        return $this->render('sortie/edit.html.twig');
+        $sortie = $sortieRepository->find($id);
+
+        if ($sortie->getOrganisateur() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous n\'êtes pas l\'organisateur de cette sortie. Vous ne pouvez pas la modifier');
+            return $this->redirectToRoute('app_sortie_detail', ["id" => $sortie->getId()]);
+        }
+        $sortieClone = $sortie;
+        $sortieForm = $this->createForm(SortieFormType::class, $sortie);
+        $sortieForm = $sortieForm->handleRequest($request);
+
+        if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
+
+            if (!$sortieForm->get('etat')->getData() && $sortieClone->getEtat()->getLibelle() === 1) {
+                $etat = $etatRepository->find(1); // état = créée
+                $reponse = 'sauvegardée';
+            } else {
+                $etat = $etatRepository->find(2); // état = publiée
+                $reponse = 'publiée';
+            }
+
+            if ($sortieForm->get('image')->getData()) {
+                $image = $sortieForm->get('image')->getData();
+                $urlImage = md5(uniqid()) . '.' . $image->guessExtension();
+                $image->move($this->getParameter('image_sortie_directory'), $urlImage);
+                $sortieImage = new SortieImage();
+                $sortieImage->setUrlImage($urlImage);
+                $sortie->addImage($sortieImage);
+            }
+
+            // TODO prévoir l'ajout de plusieurs images
+
+            $sortie->setEtat($etat);
+            $user = $userRepository->find($this->getUser());
+            $sortie->setOrganisateur($user);
+            $sortie->setCampus($user->getCampus());
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'La sortie a bien été modifiée et '.$reponse);
+            return $this->redirectToRoute('app_sortie_detail', ["id" => $sortie->getId()]);
+        }
+        // TODO gérer erreur losque dateDebut ou DateCloture est null ou DateCloture après dateDebut. Constraints ne marche pas
+
+        return $this->render('sortie/edit.html.twig', [
+            'sortieForm' => $sortieForm->createView(),
+            'sortie' => $sortie,
+        ]);
     }
 
     /**
      * @Route("/sortie/{id}/delete", name="app_sortie_delete", requirements={"id"="\d+"})
      */
-    public function delete(int $id): Response
+    public function delete(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository): Response
     {
-        return $this->redirectToRoute('app_sortie');
+        $sortie = $sortieRepository->find($id);
+        $sortieDeleteForm = $this->createForm(SortieDeleteFormType::class, $sortie);
+        $sortieDeleteForm = $sortieDeleteForm->handleRequest($request);
+
+        if ($sortie->getOrganisateur() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous n\'êtes pas l\'organisateur de cette sortie. Vous ne pouvez pas la supprimer');
+            return $this->redirectToRoute('app_sortie_detail', ["id" => $sortie->getId()]);
+        }
+
+        if ($sortieDeleteForm->isSubmitted() && $sortieDeleteForm->isValid()) {
+            $etat = $etatRepository->find(6); // état = annulée
+            $sortie->setEtat($etat);
+            $sortie->setDateAnnulation(new DateTime());
+
+            $entityManager->flush();
+
+            // Envoi d'un email à chaque participant pour les avertir de l'annulation
+            $participants = $sortie->getParticipants();
+            foreach ($participants as $participant) {
+                $this->emailVerifier->sendEmailAnnulationSortie($participant, $sortie);
+                $sortie->removeParticipant($participant);
+            }
+
+            $this->addFlash('success', 'La sortie a bien été supprimée');
+            return $this->redirectToRoute('app_sortie');
+        }
+
+        return $this->render('sortie/delete.html.twig', [
+            'sortieDeleteForm' => $sortieDeleteForm->createView(),
+            'sortie' => $sortie,
+        ]);
     }
 
     /**

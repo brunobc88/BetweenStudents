@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Supprimer votre sortie{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <h1>Supprimer votre sortie : {{ sortie.nom }}</h1>
+        {{ form_start(sortieDeleteForm) }}
+        {{ form_widget(sortieDeleteForm) }}
+        <button class="ui primary button" type="submit">Supprimer</button>
+        {{ form_end(sortieDeleteForm) }}
+    </div>
+{% endblock %}
