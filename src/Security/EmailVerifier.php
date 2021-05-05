@@ -2,10 +2,13 @@
 
 namespace App\Security;
 
+use App\Entity\Sortie;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Security\Core\User\UserInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
@@ -23,13 +26,19 @@ class EmailVerifier
         $this->entityManager = $manager;
     }
 
-    public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user, TemplatedEmail $email): void
+    public function sendEmailConfirmation(string $verifyEmailRouteName, UserInterface $user): void
     {
         $signatureComponents = $this->verifyEmailHelper->generateSignature(
             $verifyEmailRouteName,
             $user->getId(),
             $user->getEmail()
         );
+
+        $email = (new TemplatedEmail())
+            ->from(new Address('no-reply@noams88.fr', 'BetweenStudents'))
+            ->to($user->getEmail())
+            ->subject('Please Confirm your Email')
+            ->htmlTemplate('registration/confirmation_email.html.twig');
 
         $context = $email->getContext();
         $context['signedUrl'] = $signatureComponents->getSignedUrl();
@@ -52,5 +61,22 @@ class EmailVerifier
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+    }
+
+    public function sendEmailAnnulationSortie(User $participant, Sortie $sortie): void
+    {
+        $email = (new TemplatedEmail())
+            ->from(new Address('no-reply@noams88.fr', 'BetweenStudents'))
+            ->to($participant->getEmail())
+            ->subject('Annulation de la sortie ' . $sortie->getNom())
+            ->htmlTemplate('sortie/annulation_email.html.twig');
+
+        $context = $email->getContext();
+        $context['sortie'] = $sortie;
+        $context['user'] = $participant;
+
+        $email->context($context);
+
+        $this->mailer->send($email);
     }
 }

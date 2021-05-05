@@ -26,12 +26,12 @@
                         <a class="image" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
                             {% if sortie.images is not empty %}
                                 {% if 'http' in sortie.images[0].urlImage %}
-                                    <img src="{{ sortie.images[0].urlImage }}" alt="Avatar User">
+                                    <img src="{{ sortie.images[0].urlImage }}" alt="Image Sortie">
                                 {% else %}
-                                    <img src="{{ 'images/sorties/' ~ sortie.images[0].urlImage }}" alt="Avatar User">
+                                    <img src="{{ asset('images/sorties/') ~ sortie.images[0].urlImage }}" alt="Image Sortie">
                                 {% endif %}
                             {% else %}
-                                <img src="{{ asset('images/divers/no-image-sortie.png') }}">
+                                <img src="{{ asset('images/divers/no-image-sortie.png') }}" alt="Image Sortie">
                             {% endif %}
                         </a>
                         <div class="content">

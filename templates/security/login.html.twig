@@ -3,6 +3,17 @@
 {% block title %}Se connecter{% endblock %}
 
 {% block body %}
+    {% if error %}
+        <div class="row">
+            <div class="ui error message">
+                <i class="close icon"></i>
+                <div class="header">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+                <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+            </div>
+        </div>
+    {% endif %}
     <div class="row">
         <form class="ui form" method="post">
             <div class="field">

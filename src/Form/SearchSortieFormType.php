@@ -47,6 +47,13 @@ class SearchSortieFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => SearchSortie::class,
+            'method' => 'GET',
+            'csrf_protection' => false
         ]);
+    }
+
+    public function getBlockPrefix()
+    {
+        return '';
     }
 }

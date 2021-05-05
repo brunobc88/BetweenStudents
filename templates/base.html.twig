@@ -17,19 +17,18 @@
     {%  include("inc/navbar.html.twig") %}
 </header>
 
-{% for label, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="ui {{ label }} message">
-            <i class="close icon"></i>
-            <div class="header">
-                {{ message }}
-            </div>
-            <p>{{ message }}</p>
-        </div>
-    {% endfor %}
-{% endfor %}
-
 <div class="ui container">
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="ui {{ label }} message">
+                <i class="close icon"></i>
+                <div class="header">
+                    {{ message }}
+                </div>
+                <p>{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endfor %}
     {% block body %}{% endblock %}
 </div>
 
