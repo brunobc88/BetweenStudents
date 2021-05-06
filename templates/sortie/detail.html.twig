@@ -17,10 +17,28 @@
                 <div class="row">
                     <a href="#modal-participant-{{ participant.pseudo }}">{{ participant.pseudo }}</a>
                     <div id="modal-participant-{{ participant.pseudo }}" class="modal-bloc">
-                        <div class="modal-content">
-                            <h1>{{ participant.pseudo }}</h1>
-                            <p>{{ participant.nom }}</p>
+                        <div class="ui card">
                             <a href="#" class="modal-close"><i class="close icon"></i></a>
+                            <div class="image">
+                                {% if participant.urlImage %}
+                                    {% if 'http' in participant.urlImage %}
+                                        <img src="{{ participant.urlImage }}" alt="Avatar User">
+                                    {% else %}
+                                        <img src="{{ asset('images/users/') ~ participant.urlImage }}" alt="Avatar User">
+                                    {% endif %}
+                                {% else %}
+                                    <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
+                                {% endif %}
+                            </div>
+                            <div class="content">
+                                <div class="header">{{ participant.pseudo }}</div>
+                                <div class="meta">
+                                    <p>{{ participant.nom }}</p>
+                                    <p>{{ participant.prenom }}</p>
+                                    <p>{{ participant.email }}</p>
+                                    <p>{{ participant.telephone }}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -45,6 +63,16 @@
     <br><br><br>
     <div class="ui comments">
         <h3 class="ui dividing header">Commentaires</h3>
+        <div class="row">
+            <form class="ui reply form" id="formAddNewCommentaire" method="post">
+                <div class="field">
+                    <label>
+                        <textarea name="inputNewCommentaireTexte"></textarea>
+                    </label>
+                </div>
+                <button class="ui blue labeled submit icon button" id="buttonAddNewCommentaire"><i class="icon edit"></i>Add Reply</button>
+            </form>
+        </div>
         <div class="row" id="contentCommentaires">
             {% for commentaire in commentaires %}
                 <div class="comment">
@@ -70,22 +98,33 @@
                     </div>
                 </div>
                 <div id="modal-commentaire-{{ commentaire.auteur.pseudo }}" class="modal-bloc">
-                    <div class="modal-content">
-                        <h1>{{ commentaire.auteur.pseudo }}</h1>
-                        <p>{{ commentaire.auteur.nom }}</p>
+                    <div class="ui card">
                         <a href="#" class="modal-close"><i class="close icon"></i></a>
+                        <div class="image">
+                            {% if commentaire.auteur.urlImage %}
+                                {% if 'http' in commentaire.auteur.urlImage %}
+                                    <img src="{{ commentaire.auteur.urlImage }}" alt="Avatar User">
+                                {% else %}
+                                    <img src="{{ asset('images/users/') ~ commentaire.auteur.urlImage }}" alt="Avatar User">
+                                {% endif %}
+                            {% else %}
+                                <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
+                            {% endif %}
+                        </div>
+                        <div class="content">
+                            <div class="header">{{ commentaire.auteur.pseudo }}</div>
+                            <div class="meta">
+                                <p>{{ commentaire.auteur.nom }}</p>
+                                <p>{{ commentaire.auteur.prenom }}</p>
+                                <p>{{ commentaire.auteur.email }}</p>
+                                <p>{{ commentaire.auteur.telephone }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
-        <form class="ui reply form" id="formAddNewCommentaire" method="post">
-            <div class="field">
-                <label>
-                    <textarea name="inputNewCommentaireTexte"></textarea>
-                </label>
-            </div>
-            <button class="ui blue labeled submit icon button" id="buttonAddNewCommentaire"><i class="icon edit"></i>Add Reply</button>
-        </form>
+
     </div>
 {% endblock %}
 
