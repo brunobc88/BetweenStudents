@@ -46,6 +46,16 @@ class SearchSortie
     public $organisateur;
 
     /**
+     * @var User
+     */
+    public $participant;
+
+    /**
+     * @var User
+     */
+    public $both;
+
+    /**
      * @var Etat
      */
     public $etat;

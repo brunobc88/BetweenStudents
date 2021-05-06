@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sorties BetweenStudents{% endblock %}
+
+{% block body %}
+    <h1>Mes sorties</h1>
+
+    <div class="row">
+        {{ form_start(searchSortieFormType) }}
+        {{ form_widget(searchSortieFormType) }}
+        {{ form_end(searchSortieFormType) }}
+    </div>
+
+    <br>
+
+    {% include("inc/card_sortie.html.twig") %}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.addEventListener("click", () => {
+                event.target.form.submit();
+            });
+        });
+    </script>
+{% endblock %}

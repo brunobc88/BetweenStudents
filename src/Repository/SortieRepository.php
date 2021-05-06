@@ -82,7 +82,7 @@ class SortieRepository extends ServiceEntityRepository
 
         if (!empty($searchSortie->archive)) {
             $query = $query
-                ->andWhere('s.etat = 5')
+                ->andWhere('e = 5')
                 ->andWhere('s.dateDebut < :today')
                 ->andWhere('s.dateDebut > :filtre1MonthArchive')
                 ->setParameter('today', new DateTime())
@@ -91,8 +91,8 @@ class SortieRepository extends ServiceEntityRepository
 
         if (!empty($searchSortie->campus)) {
             $query = $query
-                ->andWhere('s.campus = :campusId')
-                ->setParameter('campusId', $searchSortie->campus->getId());
+                ->andWhere('c = :campus')
+                ->setParameter('campus', $searchSortie->campus);
         }
 
         if (!empty($searchSortie->dateMin)) {
@@ -107,35 +107,31 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('dateMax', $searchSortie->dateMax);
         }
 
+        if (!empty($searchSortie->organisateur)) {
+            $query = $query
+                ->orWhere('e <= 4')
+                ->andWhere('o = :organisateur')
+                ->setParameter('organisateur', $searchSortie->organisateur);
+        }
+
+        if (!empty($searchSortie->participant)) {
+            $query = $query
+                ->orWhere('e = 3 OR e = 4')
+                ->andWhere('p = :participant')
+                ->andWhere('o != :participant')
+                ->setParameter('participant', $searchSortie->participant);
+        }
+
+        if (!empty($searchSortie->both)) {
+            $query = $query
+                ->orWhere('e = 3 OR e = 4')
+                ->andWhere('p = :user')
+                ->orWhere('o = :user AND e <= 4')
+                ->setParameter('user', $searchSortie->both);
+        }
+
+        dump($query->getQuery()->getSQL());
+
         return $query;
     }
-
-    // /**
-    //  * @return Sortie[] Returns an array of Sortie objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Sortie
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

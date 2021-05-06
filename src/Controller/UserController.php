@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Form\SearchSortieUserFormType;
 use App\Form\UserEditFormType;
+use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
+use App\Services\SearchSortie;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,6 +58,37 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'userForm' => $userForm->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/user/sortie", name="app_user_sortie")
+     */
+    public function sortie(Request $request, SortieRepository $sortieRepository, UserRepository $userRepository): Response
+    {
+        $searchSortie = new SearchSortie();
+        $user = $userRepository->find($this->getUser());
+        $searchSortie->page = $request->get('page', 1);
+        if ($request->get('checkbox') === 'organise') {
+            $searchSortie->organisateur = $user;
+        }
+        elseif ($request->get('checkbox') === 'participe') {
+            $searchSortie->participant = $user;
+        }
+        else {
+            $searchSortie->both = $user;
+        }
+
+        $searchSortieFormType = $this->createForm(SearchSortieUserFormType::class, $searchSortie);
+        $searchSortieFormType->handleRequest($request);
+
+        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie);
+        $nbreResultats = count($sortieRepository->findSearchSortie($searchSortie));
+
+        return $this->render('user/sortie.html.twig', [
+            'searchSortieFormType' => $searchSortieFormType->createView(),
+            'tableauSorties' => $tableauSorties,
+            'nbreResultats' => $nbreResultats,
         ]);
     }
 }
