@@ -1,0 +1,59 @@
+{% if nbreResultats %}
+    <div class="row">
+        <p>{{ nbreResultats }} résultats</p>
+    </div>
+    <div class="row">
+        <div class="ui link cards">
+            {% for sortie in tableauSorties %}
+                <div class="card">
+                    <a class="image-css-perso" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
+                        {% if sortie.images is not empty %}
+                            {% if 'http' in sortie.images[0].urlImage %}
+                                <img src="{{ sortie.images[0].urlImage }}" alt="Image Sortie">
+                            {% else %}
+                                <img src="{{ asset('images/sorties/') ~ sortie.images[0].urlImage }}" alt="Image Sortie">
+                            {% endif %}
+                        {% else %}
+                            <img src="{{ asset('images/divers/no-image-sortie.png') }}" alt="Image Sortie">
+                        {% endif %}
+                    </a>
+                    <div class="content">
+                        <div class="header">{{ sortie.nom }}</div>
+                        <div class="meta">
+                            <a>Organisateur : {{ sortie.organisateur.pseudo }}</a><br>
+                            <a>Campus : {{ sortie.campus.nom }}</a><br>
+                            <a>Ville : {{ sortie.ville.nom }}</a><br>
+                            <a>Date : {{ sortie.dateDebut | date('d/m/Y à H:i') }}</a>
+                            <br>
+                            <a>Date cloture : {{ sortie.dateClotureInscription | date('d/m/Y à H:i') }}</a>
+                        </div>
+                        <div class="description">
+                            {{ sortie.description | split('', 100)[0] }}
+                            {% if (sortie.description | length) > 100 %}
+                                ....
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="extra content">
+                        {% if date(sortie.dateClotureInscription).diff(date("now")).m > 0 %}
+                            <span class="right floated">Cloture dans + d'un mois</span>
+                        {% else %}
+                            {% if date(sortie.dateClotureInscription).diff(date("now")).days > 0 %}
+                                <span class="right floated">Cloture dans {{ date(sortie.dateClotureInscription).diff(date("now")).format('%d jours') }}</span>
+                            {% else %}
+                                <span class="right floated">Cloture dans {{ date(sortie.dateClotureInscription).diff(date("now")).format('%Hh et %Imin') }}</span>
+                            {% endif %}
+                        {% endif %}
+                        <span><i class="user icon"></i>{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} pers</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        {{ knp_pagination_render(tableauSorties) }}
+    </div>
+{% else %}
+    <p>Aucun résultat</p>
+    <a class="positive ui button" href="{{ path('app_sortie_create') }}">Proposer une sortie</a>
+{% endif %}

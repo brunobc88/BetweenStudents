@@ -3,7 +3,6 @@
 {% block title %}Sorties BetweenStudents{% endblock %}
 
 {% block body %}
-
     <h1>Les sorties</h1>
 
     <div class="row">
@@ -15,55 +14,5 @@
 
     <br>
 
-    {% if nbreResultats %}
-        <div class="row">
-            <p>{{ nbreResultats }} résultats</p>
-        </div>
-        <div class="row">
-            <div class="ui link cards">
-                {% for sortie in tableauSorties %}
-                    <div class="card">
-                        <a class="image" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
-                            {% if sortie.images is not empty %}
-                                {% if 'http' in sortie.images[0].urlImage %}
-                                    <img src="{{ sortie.images[0].urlImage }}" alt="Image Sortie">
-                                {% else %}
-                                    <img src="{{ asset('images/sorties/') ~ sortie.images[0].urlImage }}" alt="Image Sortie">
-                                {% endif %}
-                            {% else %}
-                                <img src="{{ asset('images/divers/no-image-sortie.png') }}" alt="Image Sortie">
-                            {% endif %}
-                        </a>
-                        <div class="content">
-                            <div class="header">{{ sortie.nom }}</div>
-                            <div class="meta">
-                                <a>{{ sortie.organisateur.pseudo }}</a>
-                                <a>{{ sortie.campus.nom }}</a>
-                                <a>{{ sortie.ville.nom }}</a>
-                                <a>{{ sortie.etat.libelle }}</a>
-                            </div>
-                            <div class="description">
-                                {{ sortie.description | split('', 100)[0] }}
-                                {% if (sortie.description | length) > 100 %}
-                                    ....
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="extra content">
-                            <span class="right floated">Joined in 2013</span>
-                            <span><i class="user icon"></i>{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} participants</span>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="row">
-            {{ knp_pagination_render(tableauSorties) }}
-        </div>
-    {% else %}
-        <p>Aucun résultat</p>
-        <a class="positive ui button" href="">Proposer une sortie</a>
-    {% endif %}
-
-
+    {% include("inc/card_sortie.html.twig") %}
 {% endblock %}

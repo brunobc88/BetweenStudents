@@ -9,7 +9,26 @@
     <p>{{ sortie.description }}</p>
     <p>{{ sortie.dateDebut | date('d/m/Y à H:i') }}</p>
     <p>{{ sortie.dateClotureInscription | date('d/m/Y à H:i') }}</p>
-    <p>{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} participants</p>
+    <a class="button-modal">{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} participants</a>
+    <div class="ui longer modal">
+        <div class="header">Liste des participants</div>
+        <div class="scrolling content">
+            {% for participant in sortie.participants %}
+                <div class="row">
+                    <a href="#modal-participant-{{ participant.pseudo }}">{{ participant.pseudo }}</a>
+                    <div id="modal-participant-{{ participant.pseudo }}" class="modal-bloc">
+                        <div class="modal-content">
+                            <h1>{{ participant.pseudo }}</h1>
+                            <p>{{ participant.nom }}</p>
+                            <a href="#" class="modal-close"><i class="close icon"></i></a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <br><br>
 
     {% if (app.user in sortie.participants) %}
         <a class="ui primary button" href="{{ path('app_sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire</a>
@@ -29,7 +48,7 @@
         <div class="row" id="contentCommentaires">
             {% for commentaire in commentaires %}
                 <div class="comment">
-                    <a class="avatar">
+                    <div class="avatar">
                         {% if commentaire.auteur.urlImage %}
                             {% if 'http' in commentaire.auteur.urlImage %}
                                 <img src="{{ commentaire.auteur.urlImage }}" alt="Avatar User">
@@ -39,15 +58,22 @@
                         {% else %}
                             <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
                         {% endif %}
-                    </a>
+                    </div>
                     <div class="content">
-                        <a class="author">{{ commentaire.auteur.pseudo }}</a>
+                        <a href="#modal-commentaire-{{ commentaire.auteur.pseudo }}" class="author">{{ commentaire.auteur.pseudo }}</a>
                         <div class="metadata">
                             <span class="date">{{ commentaire.date | date('d/m/Y à H:i') }}</span>
                         </div>
                         <div class="text">
                             {{ commentaire.texte }}
                         </div>
+                    </div>
+                </div>
+                <div id="modal-commentaire-{{ commentaire.auteur.pseudo }}" class="modal-bloc">
+                    <div class="modal-content">
+                        <h1>{{ commentaire.auteur.pseudo }}</h1>
+                        <p>{{ commentaire.auteur.nom }}</p>
+                        <a href="#" class="modal-close"><i class="close icon"></i></a>
                     </div>
                 </div>
             {% endfor %}
@@ -64,6 +90,7 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>$('.ui.longer.modal').modal('attach events', '.button-modal', 'show');</script>
     <script src="{{ asset('js/requeteAjax.js') }}"></script>
     <script>requeteAjaxPost('#formAddNewCommentaire', '#buttonAddNewCommentaire', 'click', '#contentCommentaires')</script>
 {% endblock %}

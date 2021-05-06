@@ -35,10 +35,12 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie", name="app_sortie")
      */
-    public function index(Request $request, SortieRepository $sortieRepository): Response
+    public function index(Request $request, SortieRepository $sortieRepository, UserRepository $userRepository): Response
     {
         $searchSortie = new SearchSortie();
         $searchSortie->page = $request->get('page', 1);
+        $user = $userRepository->find($this->getUser());
+        $searchSortie->campus = $user->getCampus();
 
         $searchSortieFormType = $this->createForm(SearchSortieFormType::class, $searchSortie);
         $searchSortieFormType->handleRequest($request);
