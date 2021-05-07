@@ -38,3 +38,9 @@
     text-decoration: none;
     z-index: 999;
 }
+
+.button_passage_user_admin {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+}
