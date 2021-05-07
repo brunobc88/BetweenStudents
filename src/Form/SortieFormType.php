@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Sortie;
 use App\Entity\Ville;
+use App\Repository\VilleRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -12,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
@@ -128,21 +132,10 @@ class SortieFormType extends AbstractType
                         'message' => 'Veuillez renseigner le code postal du lieu de rendez-vous',
                     ]),
                     new Length([
+                        'min' => 2,
                         'max' => 10,
+                        'minMessage' => 'Veuillez indiquer au minimum {{ limit }} caractères',
                         'maxMessage' => 'Le code postal du lieu de rendez-vous doit contenir au maximum {{ limit }} caractères',
-                    ]),
-                ],
-            ])
-            ->add('ville', EntityType::class, [
-                'class' => Ville::class,
-                'label' => 'Ville',
-                'required' => false,
-                'choice_label' => 'nom',
-                'placeholder' => 'Choisir le code postal',
-                'choices' => [],
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez renseigner la ville du lieu de rendez-vous',
                     ]),
                 ],
             ])
@@ -157,6 +150,72 @@ class SortieFormType extends AbstractType
                 'mapped' => false,
             ])
         ;
+
+        $builder->get('codePostal')->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                if (strlen($form->getData()) >= 2) {
+                    $this->addVilleField($form->getParent(), $form->getData());
+                }
+            }
+        );
+
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                $ville = $data->getVille();
+                $form = $event->getForm();
+                if ($ville) {
+                    $codePostal = $ville->getCodePostal();
+                    $this->addVilleField($form, $codePostal);
+                    $form->get('codePostal')->setData($codePostal);
+                } else {
+                    $this->addVilleField($form, '');
+                }
+            }
+        );
+    }
+
+    private function addVilleField(FormInterface $form, ?string $codePostal)
+    {
+        if ($codePostal) {
+            $form->add('ville', EntityType::class, [
+                'class' => Ville::class,
+                'label' => 'Ville',
+                'required' => false,
+                'expanded' => false,
+                'multiple' => false,
+                'placeholder' => 'Choisir le code postal',
+                'choice_label' => 'nom',
+                'query_builder' => function(VilleRepository $villeRepository) use ($codePostal) {
+                    return $villeRepository->getVillesByCodePostal($codePostal);
+                },
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez renseigner la ville du lieu de rendez-vous',
+                    ]),
+                ],
+            ]);
+        }
+        else {
+            $form->add('ville', EntityType::class, [
+                'class' => Ville::class,
+                'label' => 'Ville',
+                'required' => false,
+                'expanded' => false,
+                'multiple' => false,
+                'placeholder' => 'Choisir le code postal',
+                'choice_label' => 'nom',
+                'choices' => [],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez renseigner la ville du lieu de rendez-vous',
+                    ]),
+                ],
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

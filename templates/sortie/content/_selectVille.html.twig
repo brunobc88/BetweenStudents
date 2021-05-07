@@ -1,4 +1,14 @@
-<option value="">Choisir une ville</option>
-{% for ville in villes %}
-    <option value={{ ville.id }}>{{ ville.nom }}</option>
-{% endfor %}
+{% if villes %}
+    {% if villes|length > 1 %}
+        <option value="">Choisir une ville</option>
+        {% for ville in villes %}
+            <option value={{ ville.id }}>{{ ville.nom }}</option>
+        {% endfor %}
+    {% else %}
+        {% for ville in villes %}
+            <option value={{ ville.id }}>{{ ville.nom }}</option>
+        {% endfor %}
+    {% endif %}
+{% else %}
+    <option value="">Code postal inconnu</option>
+{% endif %}

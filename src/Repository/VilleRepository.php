@@ -19,6 +19,15 @@ class VilleRepository extends ServiceEntityRepository
         parent::__construct($registry, Ville::class);
     }
 
+    public function getVillesByCodePostal(string $value)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.codePostal LIKE :value')
+            ->setParameter('value', "%{$value}%")
+            ->orderBy('v.nom', 'ASC')
+            ;
+    }
+
     // /**
     //  * @return Ville[] Returns an array of Ville objects
     //  */
@@ -47,4 +56,5 @@ class VilleRepository extends ServiceEntityRepository
         ;
     }
     */
+
 }
