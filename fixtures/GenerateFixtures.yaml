@@ -14,7 +14,7 @@ App\Entity\Etat:
 
 
 App\Entity\Ville:
-  ville_{1..20}:
+  ville_{1..100}:
     nom: '<city()>'
     codePostal: '<numberBetween(0, 9)><numberBetween(0, 9)>000'
 

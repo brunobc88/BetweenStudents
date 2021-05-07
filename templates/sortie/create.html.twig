@@ -12,3 +12,7 @@
     </div>
 {% endblock %}
 
+{% block javascripts %}
+    <script src="{{ asset('js/requeteAjax.js') }}"></script>
+    <script>requeteAjaxGet('#sortie_form_codePostal', 'change', '#sortie_form_ville')</script>
+{% endblock %}

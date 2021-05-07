@@ -13,6 +13,7 @@ use App\Repository\EtatRepository;
 use App\Repository\SortieCommentaireRepository;
 use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
+use App\Repository\VilleRepository;
 use App\Security\EmailVerifier;
 use App\Services\SearchSortie;
 use DateTime;
@@ -72,7 +73,7 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('app_sortie');
         }
 
-        if ($request->get('inputNewCommentaireTexte')) {
+        if ($request->get('ajax') && $request->get('inputNewCommentaireTexte')) {
             $newCommentaires = new SortieCommentaire();
             $newCommentaires->setSortie($sortie);
             $newCommentaires->setDate(new DateTime());
@@ -97,7 +98,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/create", name="app_sortie_create")
      */
-    public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, UserRepository $userRepository): Response
+    public function create(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository, UserRepository $userRepository, VilleRepository $villeRepository): Response
     {
         $sortie = new Sortie();
         $sortieForm = $this->createForm(SortieFormType::class, $sortie);
@@ -136,6 +137,16 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('app_sortie');
         }
         // TODO gérer erreur losque dateDebut ou DateCloture est null ou DateCloture après dateDebut. Constraints ne marche pas
+
+        if ($request->get('ajax') && $request->get('sortie_form')['codePostal']) {
+            $codePostal = $request->get('sortie_form')['codePostal'];
+
+            $villes = $villeRepository->findBy(array('codePostal' => $codePostal), array('nom' => 'ASC'), null, 0);
+
+            return new JsonResponse([
+                'content' => $this->renderView('sortie/content/_selectVille.html.twig', compact('villes'))
+            ]);
+        }
 
         return $this->render('sortie/create.html.twig', [
             'sortieForm' => $sortieForm->createView(),

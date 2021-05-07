@@ -119,11 +119,27 @@ class SortieFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('codePostal', null, [
+                'label' => 'Code Postal',
+                'required' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez renseigner le code postal du lieu de rendez-vous',
+                    ]),
+                    new Length([
+                        'max' => 10,
+                        'maxMessage' => 'Le code postal du lieu de rendez-vous doit contenir au maximum {{ limit }} caractères',
+                    ]),
+                ],
+            ])
             ->add('ville', EntityType::class, [
                 'class' => Ville::class,
                 'label' => 'Ville',
                 'required' => false,
                 'choice_label' => 'nom',
+                'placeholder' => 'Choisir le code postal',
+                'choices' => [],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez renseigner la ville du lieu de rendez-vous',

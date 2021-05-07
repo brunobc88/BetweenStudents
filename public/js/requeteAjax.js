@@ -27,7 +27,7 @@ function requeteAjaxPost(selectorFormulaire, selectorElementAction, typeAction, 
 
         const Url = new URL(window.location.href);
 
-        fetch(Url.pathname + "?" + Params.toString(), {
+        fetch(Url.pathname + "?" + Params.toString() + "&ajax=1", {
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
             }
@@ -73,7 +73,7 @@ function requeteAjaxGet(selectorElementAction, typeAction, selectorReponse, modi
 
         const Url = new URL(window.location.href);
 
-        fetch(Url.pathname + "?" + Params.toString(), {
+        fetch(Url.pathname + "?" + Params.toString() + "&ajax=1", {
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
             }
