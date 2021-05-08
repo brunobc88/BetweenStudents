@@ -1,0 +1,10 @@
+<h1>Bonjour {{ user.prenom }}</h1>
+
+{% if user.actif %}
+    <p>Nous avons le plaisir de vous informer que votre compte a été ré-activé.</p>
+{% else %}
+    <p>Nous avons le regret de vous informer que votre compte a été bloqué.</p>
+    <p>Pour avoir plus d'information à ce sujet, nous vous invitons à vous rapprocher des administrateurs du site.</p>
+{% endif %}
+
+<p>A bientôt !</p>

@@ -1,17 +1,6 @@
-:root {
-    --tablet: 768px;
-    --smallMonitor: 992px;
-    --largeMonitor: 1200px;
-    --font-family: 'Open Sans', sans-serif;
-}
-
-body {
-    font-family: var(--font-family) !important;
-}
-
-body ::-webkit-scrollbar {
-    width: 6px;
-}
+/*body ::-webkit-scrollbar {*/
+/*    width: 6px;*/
+/*}*/
 
 .ui.vertical.menu.sidebar-menu {
     margin-top: 40px !important;
@@ -21,7 +10,7 @@ body ::-webkit-scrollbar {
 
 .ui.vertical.menu.sidebar-menu .item i.icon {
     float: left;
-    margin: 0em 0.5em 0em 0em;
+    margin: 0 0.5em 0 0;
 }
 
 .main-content {

@@ -1,0 +1,189 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Admin Utilisateur{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {{ form_start(searchUserFormType) }}
+        {{ form_widget(searchUserFormType) }}
+        <button class="ui primary button" type="submit">Rechercher</button>
+        {{ form_end(searchUserFormType) }}
+    </div>
+    <div class="ui grid stackable padded">
+        <div class="column">
+            <div class="row">
+                <h2>Liste des utilisateurs</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            </div>
+            <table class="ui celled striped table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Pseudo</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th>Campus</th>
+                    <th data-tooltip="Nombre de sorties organisées">Org<i class="question circle icon"></i></th>
+                    <th data-tooltip="Nombre participation à des sorties">Part<i class="question circle icon"></i></th>
+                    <th data-tooltip="Nombre de commentaires posté">Com<i class="question circle icon"></i></th>
+                    <th>Admin</th>
+                    <th>Actif</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in tableauUsers %}
+                    <tr>
+                        <td><a onclick="modalAfficherUser({{ user.id }})" style="cursor: pointer">{{ user.id }}</a></td>
+                        <td>{{ user.pseudo }}</td>
+                        <td>{{ user.nom }}</td>
+                        <td>{{ user.prenom }}</td>
+                        <td>{{ user.telephone }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.campus.nom }}</td>
+                        <td>{{ user.sortiesAsOrganisateur | length }}</td>
+                        <td>{{ user.sortiesAsParticipant | length }}</td>
+                        <td>{{ user.commentaires | length }}</td>
+                        <td>
+                            <div class="field">
+                                <div class="ui toggle checkbox">
+                                    <label for="checkboxAdmin{{ user.id }}"></label>
+                                    <input onchange="requeteAjaxEdit({{ user.id }}, '#checkboxAdmin{{ user.id }}')" type="checkbox" name="checkboxAdmin" tabindex="0" class="hidden" disabled {{ user.administrateur ? 'checked' : '' }} id="checkboxAdmin{{ user.id }}">
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="field">
+                                <div class="ui toggle checkbox">
+                                    <label for="checkboxActif{{ user.id }}"></label>
+                                    <input onchange="requeteAjaxEdit({{ user.id }}, '#checkboxActif{{ user.id }}')" type="checkbox" name="checkboxActif" tabindex="0" class="hidden" disabled {{ user.actif ? 'checked' : '' }} id="checkboxActif{{ user.id }}">
+                                </div>
+                            </div>
+                        </td>
+                        <td class="right aligned collapsing" id="divEdit{{ user.id }}">
+                            <button onclick="editUser({{ user.id }})" class="ui icon button" id="buttonEdit{{ user.id }}"><i class="edit icon"></i></button>
+                            <button onclick="modalSupprimerUser({{ user.id }})" class="ui icon button"><i class="trash icon"></i></button>
+                        </td>
+                    </tr>
+                    <!-- modal -->
+                    <div class="ui dimmer modals page transition hidden">
+                        <div class="ui small basic test modal modalAnnulerSortie{{ user.id }} transition hidden">
+                            <div class="ui icon header">
+                                <i class="icon trash"></i>
+                                Supprimer l'utilisateur
+                            </div>
+                            <div class="content ui right aligned">
+                                <p>Cette action est définitive. Confirmez-vous la suppression de l'utilisateur ?</p>
+                            </div>
+                            <div class="actions">
+                                <div class="ui red basic cancel inverted button">
+                                    <i class="remove icon"></i>
+                                    No
+                                </div>
+                                <a class="ui green ok inverted button">
+                                    <i class="checkmark icon"></i>
+                                    Yes
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ui standard test modal modalAfficherSortie{{ user.id }} transition hidden">
+                            <div class="header">
+                                Profil
+                            </div>
+                            <div class="image content">
+                                <div class="ui medium image">
+                                    {% if user.urlImage %}
+                                        {% if 'http' in user.urlImage %}
+                                            <img src="{{ user.urlImage }}" alt="Avatar User">
+                                        {% else %}
+                                            <img src="{{ asset('images/users/') ~ user.urlImage }}" alt="Avatar User">
+                                        {% endif %}
+                                    {% else %}
+                                        <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
+                                    {% endif %}
+                                </div>
+                                <div class="description">
+                                    <div class="ui header">Pseudo : {{ user.pseudo }}</div>
+                                    <p>Id : {{ user.id }}</p>
+                                    <p>Nom : {{ user.nom }}</p>
+                                    <p>Prénom : {{ user.prenom }}</p>
+                                    <p>Téléphone : {{ user.telephone }}</p>
+                                    <p>Email : {{ user.email }}</p>
+                                    <p>Campus : {{ user.campus.nom }}</p>
+                                    <p>Admin : {{ user.administrateur ? 'Oui' : 'Non' }}</p>
+                                    <p>Actif : {{ user.actif ? 'Oui' : 'Non' }}</p>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <div class="ui black deny button">
+                                    Fermer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- modal -->
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="row">
+                {{ knp_pagination_render(tableauUsers) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $('.ui.checkbox')
+            .checkbox()
+        ;
+        function modalAfficherUser(id) {
+            $('.ui.modal.modalAfficherSortie'+id)
+                .modal('show')
+            ;
+        }
+        function modalSupprimerUser(id) {
+            $('.basic.test.modal.modalAnnulerSortie'+id)
+                .modal('setting', 'closable', false)
+                .modal('show')
+            ;
+        }
+        function editUser(id) {
+            if (document.getElementById('checkboxAdmin'+id).disabled) {
+                document.getElementById('checkboxAdmin'+id).disabled = false;
+                document.getElementById('checkboxActif'+id).disabled = false;
+                document.getElementById('divEdit'+id).innerHTML = '' +
+                    '<button onclick="editUser('+id+')" class="ui icon button" id="buttonEdit'+id+'"><i class="check icon"></i></button>' +
+                    '<button onclick="modalSupprimerUser('+id+')" class="ui icon button"><i class="trash icon"></i></button>';
+            }
+            else {
+                document.getElementById('checkboxAdmin'+id).disabled = true;
+                document.getElementById('checkboxActif'+id).disabled = true;
+                document.getElementById('divEdit'+id).innerHTML = '' +
+                    '<button onclick="editUser('+id+')" class="ui icon button" id="buttonEdit'+id+'"><i class="edit icon"></i></button>' +
+                    '<button onclick="modalSupprimerUser('+id+')" class="ui icon button"><i class="trash icon"></i></button>';
+            }
+        }
+        function requeteAjaxEdit(id, selector) {
+            const Params = new URLSearchParams();
+            Params.append(document.querySelector(selector).name, document.querySelector(selector).checked);
+            Params.append('id', id);
+
+            const Url = new URL(window.location.href);
+
+            fetch(Url.pathname + "?" + Params.toString() + "&ajax=1", {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            }).then(response =>
+                response.json()
+            ).then(data => {
+                history.pushState({}, null, Url.pathname);
+            }).catch(e => alert(e));
+
+            editUser(id);
+        }
+    </script>
+{% endblock %}
+

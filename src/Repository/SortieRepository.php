@@ -27,15 +27,15 @@ class SortieRepository extends ServiceEntityRepository
         $this->paginator = $paginator;
     }
 
-    public function findSearchSortiePaginate(SearchSortie $searchSortie): PaginationInterface
+    public function findSearchSortiePaginate(SearchSortie $searchSortie, int $nbreResultat, bool $administrateur = false): PaginationInterface
     {
-        $query = $this->getSearchQuerySortie($searchSortie)->getQuery();
-        return $this->paginator->paginate($query, $searchSortie->page, 12);
+        $query = $this->getSearchQuerySortie($searchSortie, $administrateur)->getQuery();
+        return $this->paginator->paginate($query, $searchSortie->page, $nbreResultat);
     }
 
-    public function findSearchSortie(SearchSortie $searchSortie): array
+    public function findSearchSortie(SearchSortie $searchSortie, bool $administrateur = false): array
     {
-        return $this->getSearchQuerySortie($searchSortie)->getQuery()->getResult();
+        return $this->getSearchQuerySortie($searchSortie, $administrateur)->getQuery()->getResult();
     }
 
     public function findSortie(int $id): Sortie
@@ -54,39 +54,49 @@ class SortieRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    private function getSearchQuerySortie(SearchSortie $searchSortie): QueryBuilder
+    private function getSearchQuerySortie(SearchSortie $searchSortie, bool $administrateur): QueryBuilder
     {
         $query = $this
             ->createQueryBuilder('s')
-            ->select('s', 'o', 'p', 'e', 'v', 'i', 'c')
+            ->select('s', 'o', 'p', 'e', 'v', 'i', 'c', 'com')
             ->leftJoin('s.organisateur', 'o')
             ->leftJoin('s.participants', 'p')
             ->leftJoin('s.etat', 'e')
             ->leftJoin('s.ville', 'v')
             ->leftJoin('s.images', 'i')
-            ->leftJoin('s.campus', 'c');
+            ->leftJoin('s.campus', 'c')
+            ->leftJoin('s.commentaires', 'com');
 
         if (!empty($searchSortie->keyword)) {
             $query = $query
                 ->where($query->expr()->orX(
+                    $query->expr()->like('s.id', ':keyword'),
                     $query->expr()->like('s.nom', ':keyword'),
                     $query->expr()->like('s.description', ':keyword')
                 ))
                 ->setParameter('keyword', "%{$searchSortie->keyword}%");
         }
 
-        if (empty($searchSortie->archive)) {
-            $query = $query
-                ->andWhere('e = 2');
+        if ($administrateur) {
+            if (empty($searchSortie->archive)) {
+                $query = $query
+                    ->andWhere('e = e');
+            }
         }
+        else {
+            if (empty($searchSortie->archive)) {
+                $query = $query
+                    ->andWhere('e = 2');
+            }
 
-        if (!empty($searchSortie->archive)) {
-            $query = $query
-                ->andWhere('e = 5')
-                ->andWhere('s.dateDebut < :today')
-                ->andWhere('s.dateDebut > :filtre1MonthArchive')
-                ->setParameter('today', new DateTime())
-                ->setParameter('filtre1MonthArchive', date_modify(new DateTime(), '-1 month'));
+            if (!empty($searchSortie->archive)) {
+                $query = $query
+                    ->andWhere('e = 5')
+                    ->andWhere('s.dateDebut < :today')
+                    ->andWhere('s.dateDebut > :filtre1MonthArchive')
+                    ->setParameter('today', new DateTime())
+                    ->setParameter('filtre1MonthArchive', date_modify(new DateTime(), '-1 month'));
+            }
         }
 
         if (!empty($searchSortie->campus)) {
@@ -129,8 +139,6 @@ class SortieRepository extends ServiceEntityRepository
                 ->orWhere('o = :user AND e <= 4')
                 ->setParameter('user', $searchSortie->both);
         }
-
-        dump($query->getQuery()->getSQL());
 
         return $query;
     }

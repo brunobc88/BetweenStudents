@@ -15,6 +15,7 @@
                 <a href="#" class="item"><i class="sign-out icon"></i>Logout</a>
             </div>
         </div>
+        <a href="{{ path('app_logout') }}" class="item"><i class="sign-out icon"></i></a>
     </div>
 </nav>
 <!-- top nav -->
@@ -36,17 +37,17 @@
             Administration
         </div>
         <div class="menu">
-            <a class="item">
-                <div><i class="cogs icon"></i>Sorties</div>
+            <a class="item" href="{{ path('app_admin_sortie') }}">
+                <div><i class="bicycle icon"></i>Sorties</div>
             </a>
-            <a class="item">
+            <a class="item" href="{{ path('app_admin_user') }}">
                 <div><i class="users icon"></i>Utilisateurs</div>
             </a>
-            <a class="item">
-                <div><i class="users icon"></i>Villes</div>
+            <a class="item" href="{{ path('app_admin_ville') }}">
+                <div><i class="building icon"></i>Villes</div>
             </a>
-            <a class="item">
-                <div><i class="users icon"></i>Campus</div>
+            <a class="item" href="{{ path('app_admin_campus') }}">
+                <div><i class="industry icon"></i>Campus</div>
             </a>
         </div>
     </div>

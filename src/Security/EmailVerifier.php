@@ -79,4 +79,29 @@ class EmailVerifier
 
         $this->mailer->send($email);
     }
+
+    public function sendEmailUserEtatCompte(User $user)
+    {
+        if ($user->getActif()) {
+            $email = (new TemplatedEmail())
+                ->from(new Address('no-reply@noams88.fr', 'BetweenStudents'))
+                ->to($user->getEmail())
+                ->subject('Ré-activation de votre compte')
+                ->htmlTemplate('user/etatCompte_email.html.twig');
+        }
+        else {
+            $email = (new TemplatedEmail())
+                ->from(new Address('no-reply@noams88.fr', 'BetweenStudents'))
+                ->to($user->getEmail())
+                ->subject('Suspension de votre compte')
+                ->htmlTemplate('user/etatCompte_email.html.twig');
+        }
+
+        $context = $email->getContext();
+        $context['user'] = $user;
+
+        $email->context($context);
+
+        $this->mailer->send($email);
+    }
 }

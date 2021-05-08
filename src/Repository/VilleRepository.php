@@ -3,8 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Ville;
+use App\Services\SearchVille;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @method Ville|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,12 +18,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class VilleRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $paginator;
+
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Ville::class);
+        $this->paginator = $paginator;
     }
 
-    public function getVillesByCodePostal(string $value)
+    public function getVillesByCodePostal(string $value): QueryBuilder
     {
         return $this->createQueryBuilder('v')
             ->andWhere('v.codePostal LIKE :value')
@@ -28,33 +35,29 @@ class VilleRepository extends ServiceEntityRepository
             ;
     }
 
-    // /**
-    //  * @return Ville[] Returns an array of Ville objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findSearchVillePaginate(SearchVille $searchVille, int $nbreResultat): PaginationInterface
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('v.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->getSearchQueryVille($searchVille)->getQuery();
+        return $this->paginator->paginate($query, $searchVille->page, $nbreResultat);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Ville
+    private function getSearchQueryVille(SearchVille $searchVille): QueryBuilder
     {
-        return $this->createQueryBuilder('v')
-            ->andWhere('v.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+        $query = $this
+            ->createQueryBuilder('v')
+            ->select('v', 's')
+            ->leftJoin('v.sorties', 's');
 
+        if (!empty($searchVille->keyword)) {
+            $query = $query
+                ->where($query->expr()->orX(
+                    $query->expr()->like('v.id', ':keyword'),
+                    $query->expr()->like('v.nom', ':keyword'),
+                    $query->expr()->like('v.codePostal', ':keyword')
+                ))
+                ->setParameter('keyword', "%{$searchVille->keyword}%");
+        }
+
+        return $query;
+    }
 }

@@ -1,0 +1,42 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Admin Ville{% endblock %}
+
+{% block body %}
+    <div class="row">
+        {{ form_start(searchVilleFormType) }}
+        {{ form_widget(searchVilleFormType) }}
+        <button class="ui primary button" type="submit">Rechercher</button>
+        {{ form_end(searchVilleFormType) }}
+    </div>
+    <div class="ui grid stackable padded">
+        <div class="column">
+            <div class="row">
+                <h2>Liste des villes</h2>
+            </div>
+            <table class="ui celled striped table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Code Postal</th>
+                    <th>Nombre total de sorties</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ville in tableauVilles %}
+                    <tr>
+                        <td>{{ ville.id }}</td>
+                        <td>{{ ville.nom }}</td>
+                        <td>{{ ville.codePostal }}</td>
+                        <td>{{ ville.sorties | length }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="row">
+                {{ knp_pagination_render(tableauVilles) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

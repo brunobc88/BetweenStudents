@@ -3,8 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use App\Services\SearchUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,9 +22,12 @@ use function get_class;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private $paginator;
+
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, User::class);
+        $this->paginator = $paginator;
     }
 
     public function loadUserByEmailOrPseudo(string $emailOrPseudo)
@@ -30,7 +37,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $entityManager->createQuery(
             'SELECT u
                 FROM App\Entity\User u
-                WHERE (u.pseudo = :query OR u.email = :query) AND u.actif = 1'
+                WHERE (u.pseudo = :query OR u.email = :query)'
         )
             ->setParameter('query', $emailOrPseudo)
             ->getOneOrNullResult();
@@ -50,32 +57,64 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findSearchUserPaginate(SearchUser $searchUser, int $nbreResultat): PaginationInterface
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->getSearchQueryUser($searchUser)->getQuery();
+        return $this->paginator->paginate($query, $searchUser->page, $nbreResultat);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?User
+    public function findSearchUser(SearchUser $searchUser): array
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->getSearchQueryUser($searchUser)->getQuery()->getResult();
     }
-    */
+
+    private function getSearchQueryUser(SearchUser $searchUser): QueryBuilder
+    {
+        $query = $this
+            ->createQueryBuilder('u')
+            ->select('u', 'c', 'sO', 'sP', 'com')
+            ->leftJoin('u.campus', 'c')
+            ->leftJoin('u.sortiesAsOrganisateur', 'sO')
+            ->leftJoin('u.sortiesAsParticipant', 'sP')
+            ->leftJoin('u.commentaires', 'com');
+
+        if (!empty($searchUser->keyword)) {
+            $query = $query
+                ->where($query->expr()->orX(
+                    $query->expr()->like('u.id', ':keyword'),
+                    $query->expr()->like('u.email', ':keyword'),
+                    $query->expr()->like('u.pseudo', ':keyword'),
+                    $query->expr()->like('u.nom', ':keyword'),
+                    $query->expr()->like('u.prenom', ':keyword'),
+                    $query->expr()->like('u.telephone', ':keyword')
+                ))
+                ->setParameter('keyword', "%{$searchUser->keyword}%");
+        }
+
+        if (!empty($searchUser->campus)) {
+            $query = $query
+                ->andWhere('c = :campus')
+                ->setParameter('campus', $searchUser->campus);
+        }
+
+        if (!empty($searchUser->isAdmin)) {
+            $query = $query
+                ->andWhere('u.administrateur = 1');
+        }
+        else {
+            $query = $query
+                ->andWhere('u.administrateur = 0');
+        }
+
+        if (!empty($searchUser->isActif)) {
+            $query = $query
+                ->andWhere('u.actif = 1');
+        }
+        else {
+            $query = $query
+                ->andWhere('u.actif = 0');
+        }
+
+        return $query;
+    }
 }

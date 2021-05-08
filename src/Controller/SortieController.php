@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\CommentaireSortie;
 use App\Entity\Sortie;
 use App\Entity\SortieCommentaire;
 use App\Entity\SortieImage;
@@ -48,7 +47,7 @@ class SortieController extends AbstractController
         $searchSortieFormType = $this->createForm(SearchSortieFormType::class, $searchSortie);
         $searchSortieFormType->handleRequest($request);
 
-        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie);
+        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie, 12);
         $nbreResultats = count($sortieRepository->findSearchSortie($searchSortie));
 
         return $this->render('sortie/index.html.twig', [
@@ -66,13 +65,15 @@ class SortieController extends AbstractController
         $sortie = $sortieRepository->findSortie($id);
         $commentaires = $sortieCommentaireRepository->findBy(array('sortie' => $id), array('date' => 'DESC'), null, 0);
 
-        if ($sortie->getEtat()->getId() === 1 && $sortie->getOrganisateur() !== $this->getUser()) {
-            $this->addFlash('error', 'Vous ne pouvez pas accéder à cette sortie');
-            return $this->redirectToRoute('app_sortie');
-        }
-        if ($sortie->getEtat()->getId() >= 5) {
-            $this->addFlash('error', 'Vous ne pouvez plus accéder à cette sortie');
-            return $this->redirectToRoute('app_sortie');
+        if ($this->getUser()->getRoles() !== ['ROLE_ADMIN']) {
+            if ($sortie->getEtat()->getId() === 1 && $sortie->getOrganisateur() !== $this->getUser()) {
+                $this->addFlash('error', 'Vous ne pouvez pas accéder à cette sortie');
+                return $this->redirectToRoute('app_sortie');
+            }
+            if ($sortie->getEtat()->getId() >= 5) {
+                $this->addFlash('error', 'Vous ne pouvez plus accéder à cette sortie');
+                return $this->redirectToRoute('app_sortie');
+            }
         }
 
         if ($request->get('ajax') && $request->get('inputNewCommentaireTexte')) {

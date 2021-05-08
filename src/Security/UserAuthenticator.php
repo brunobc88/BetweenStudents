@@ -73,6 +73,10 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Identifiants invalides.');
         }
+        elseif (!$user->getActif()) {
+            // fail authentication with a custom error
+            throw new CustomUserMessageAuthenticationException('Votre compte est bloqué. Contactez l\'administrateur.');
+        }
 
         return $user;
     }

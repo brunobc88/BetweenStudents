@@ -1,0 +1,83 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Admin Sortie{% endblock %}
+
+{% block body %}
+    <div class="ui grid stackable padded">
+        <div class="column">
+            <div class="row">
+                <h2>Liste des sorties</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            </div>
+            <table class="ui celled striped table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Organisateur</th>
+                    <th>Nbre participants</th>
+                    <th>Nbre commentaires</th>
+                    <th>Etat</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for sortie in tableauSorties %}
+                    <tr>
+                        <td><a href="{{ path('app_sortie_detail', {'id': sortie.id}) }}" target="_blank">{{ sortie.id }}</a></td>
+                        <td>{{ sortie.nom }}</td>
+                        <td>{{ sortie.organisateur.pseudo }}</td>
+                        <td>{{ sortie.participants | length }}</td>
+                        <td>{{ sortie.commentaires | length }}</td>
+                        <td>{{ sortie.etat.libelle }}</td>
+                        {% if sortie.etat.libelle == 'ouverte' or sortie.etat.libelle == 'cloturee' or sortie.etat.libelle == 'en_cours' %}
+                            <td class="right aligned collapsing"><button onclick="modalSupprimerSortie({{ sortie.id }})" class="ui icon button"><i class="trash icon"></i></button></td>
+                        {% else %}
+                            <td class="right aligned collapsing"></td>
+                        {% endif %}
+                    </tr>
+                    <!-- modal -->
+                    {% if sortie.etat.libelle == 'ouverte' or sortie.etat.libelle == 'cloturee' or sortie.etat.libelle == 'en_cours' %}
+                        <div class="ui dimmer modals page transition hidden">
+                            <div class="ui small basic test modal modalAnnulerSortie{{ sortie.id }} transition hidden">
+                                <div class="ui icon header">
+                                    <i class="icon trash"></i>
+                                    Supprimer la sortie
+                                </div>
+                                <div class="content ui right aligned">
+                                    <p>Cette action est définitive. Confirmez-vous la suppression de la sortie ?</p>
+                                </div>
+                                <div class="actions">
+                                    <div class="ui red basic cancel inverted button">
+                                        <i class="remove icon"></i>
+                                        No
+                                    </div>
+                                    <a class="ui green ok inverted button" href="{{ path('app_admin_sortie_delete', {'id': sortie.id}) }}">
+                                        <i class="checkmark icon"></i>
+                                        Yes
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- modal -->
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="row">
+                {{ knp_pagination_render(tableauSorties) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function modalSupprimerSortie(id){
+            $('.basic.test.modal.modalAnnulerSortie'+id)
+                .modal('setting', 'closable', false)
+                .modal('show')
+            ;
+        }
+    </script>
+{% endblock %}
+

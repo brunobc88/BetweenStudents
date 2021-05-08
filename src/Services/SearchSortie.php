@@ -9,7 +9,6 @@ use DateTime;
 
 class SearchSortie
 {
-
     /**
      * @var int
      */
@@ -59,5 +58,4 @@ class SearchSortie
      * @var Etat
      */
     public $etat;
-
 }

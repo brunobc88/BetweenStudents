@@ -1,0 +1,42 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Admin Campus{% endblock %}
+
+{% block body %}
+    <div class="ui grid stackable padded">
+        <div class="column">
+            <div class="row">
+                <h2>Liste des campus</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            </div>
+            <table class="ui celled striped table">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Code Postal</th>
+                    <th>Ville</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for campus in tableauCampus %}
+                    <tr>
+                        <td>{{ campus.id }}</td>
+                        <td>{{ campus.nom }}</td>
+                        <td>{{ campus.ville.codePostal }}</td>
+                        <td>{{ campus.ville.nom }}</td>
+                        <td class="right aligned collapsing">
+                            {#                            <button onclick="editUser({{ user.id }})" class="ui icon button" id="buttonEdit{{ user.id }}"><i class="edit icon"></i></button>#}
+                            {#                            <button onclick="modalSupprimerUser({{ user.id }})" class="ui icon button"><i class="trash icon"></i></button>#}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{% endblock %}
+
