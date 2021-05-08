@@ -40,8 +40,10 @@ class SortieController extends AbstractController
     {
         $searchSortie = new SearchSortie();
         $searchSortie->page = $request->get('page', 1);
-        $user = $userRepository->find($this->getUser());
-        $searchSortie->campus = $user->getCampus();
+        if ($this->getUser()) {
+            $user = $userRepository->find($this->getUser());
+            $searchSortie->campus = $user->getCampus();
+        }
 
         $searchSortieFormType = $this->createForm(SearchSortieFormType::class, $searchSortie);
         $searchSortieFormType->handleRequest($request);
