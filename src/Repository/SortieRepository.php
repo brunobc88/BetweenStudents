@@ -29,13 +29,13 @@ class SortieRepository extends ServiceEntityRepository
 
     public function findSearchSortiePaginate(SearchSortie $searchSortie, int $nbreResultat, bool $administrateur = false): PaginationInterface
     {
-        $query = $this->getSearchQuerySortie($searchSortie, $administrateur)->getQuery();
+        $query = $this->getSearchQuerySortie($searchSortie, $administrateur, false)->getQuery();
         return $this->paginator->paginate($query, $searchSortie->page, $nbreResultat);
     }
 
-    public function findSearchSortie(SearchSortie $searchSortie, bool $administrateur = false): array
+    public function countResultSearchSortie(SearchSortie $searchSortie, bool $administrateur = false): int
     {
-        return $this->getSearchQuerySortie($searchSortie, $administrateur)->getQuery()->getResult();
+        return $this->getSearchQuerySortie($searchSortie, $administrateur, true)->getQuery()->getSingleScalarResult();
     }
 
     public function findSortie(int $id): Sortie
@@ -54,11 +54,10 @@ class SortieRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    private function getSearchQuerySortie(SearchSortie $searchSortie, bool $administrateur): QueryBuilder
+    private function getSearchQuerySortie(SearchSortie $searchSortie, bool $administrateur, bool $count): QueryBuilder
     {
         $query = $this
             ->createQueryBuilder('s')
-            ->select('s', 'o', 'p', 'e', 'v', 'i', 'c', 'com')
             ->leftJoin('s.organisateur', 'o')
             ->leftJoin('s.participants', 'p')
             ->leftJoin('s.etat', 'e')
@@ -66,6 +65,15 @@ class SortieRepository extends ServiceEntityRepository
             ->leftJoin('s.images', 'i')
             ->leftJoin('s.campus', 'c')
             ->leftJoin('s.commentaires', 'com');
+
+        if ($count) {
+            $query = $query
+                ->select('COUNT(DISTINCT s)');
+        }
+        else {
+            $query = $query
+                ->select('s', 'o', 'p', 'e', 'v', 'i', 'c', 'com');
+        }
 
         if (!empty($searchSortie->keyword)) {
             $query = $query

@@ -51,7 +51,7 @@ class AdminController extends AbstractController
         $searchSortieFormType->handleRequest($request);
 
         $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie, 24, true);
-        $nbreResultats = count($sortieRepository->findSearchSortie($searchSortie, true));
+        $nbreResultats = $sortieRepository->countResultSearchSortie($searchSortie, true);
 
         return $this->render('admin/sortie.html.twig', [
             'tableauSorties' => $tableauSorties,
@@ -95,7 +95,7 @@ class AdminController extends AbstractController
         $searchUserFormType->handleRequest($request);
 
         $tableauUsers = $userRepository->findSearchUserPaginate($searchUser, 24);
-        $nbreResultats = count($userRepository->findSearchUser($searchUser));
+        $nbreResultats = $userRepository->countResultSearchUser($searchUser);
 
         if ($request->get('ajax') && ($request->get('checkboxAdmin') || $request->get('checkboxActif'))) {
             $user = $userRepository->find($request->get('id'));
@@ -145,10 +145,12 @@ class AdminController extends AbstractController
         $searchVilleFormType->handleRequest($request);
 
         $tableauVilles = $villeRepository->findSearchVillePaginate($searchVille, 24);
+        $nbreResultats = $villeRepository->countResultSearchVille($searchVille);
 
         return $this->render('admin/ville.html.twig', [
             'searchVilleFormType' => $searchVilleFormType->createView(),
             'tableauVilles' => $tableauVilles,
+            'nbreResultats' => $nbreResultats,
         ]);
     }
 

@@ -37,16 +37,29 @@ class VilleRepository extends ServiceEntityRepository
 
     public function findSearchVillePaginate(SearchVille $searchVille, int $nbreResultat): PaginationInterface
     {
-        $query = $this->getSearchQueryVille($searchVille)->getQuery();
+        $query = $this->getSearchQueryVille($searchVille, false)->getQuery();
         return $this->paginator->paginate($query, $searchVille->page, $nbreResultat);
     }
 
-    private function getSearchQueryVille(SearchVille $searchVille): QueryBuilder
+    public function countResultSearchVille(SearchVille $searchVille): int
+    {
+        return $this->getSearchQueryVille($searchVille, true)->getQuery()->getSingleScalarResult();
+    }
+
+    private function getSearchQueryVille(SearchVille $searchVille, bool $count): QueryBuilder
     {
         $query = $this
             ->createQueryBuilder('v')
-            ->select('v', 's')
             ->leftJoin('v.sorties', 's');
+
+        if ($count) {
+            $query = $query
+                ->select('COUNT(DISTINCT v)');
+        }
+        else {
+            $query = $query
+                ->select('v', 's');
+        }
 
         if (!empty($searchVille->keyword)) {
             $query = $query

@@ -59,24 +59,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function findSearchUserPaginate(SearchUser $searchUser, int $nbreResultat): PaginationInterface
     {
-        $query = $this->getSearchQueryUser($searchUser)->getQuery();
+        $query = $this->getSearchQueryUser($searchUser, false)->getQuery();
         return $this->paginator->paginate($query, $searchUser->page, $nbreResultat);
     }
 
-    public function findSearchUser(SearchUser $searchUser): array
+    public function countResultSearchUser(SearchUser $searchUser): int
     {
-        return $this->getSearchQueryUser($searchUser)->getQuery()->getResult();
+        return $this->getSearchQueryUser($searchUser, true)->getQuery()->getSingleScalarResult();
     }
 
-    private function getSearchQueryUser(SearchUser $searchUser): QueryBuilder
+    private function getSearchQueryUser(SearchUser $searchUser, bool $count): QueryBuilder
     {
         $query = $this
             ->createQueryBuilder('u')
-            ->select('u', 'c', 'sO', 'sP', 'com')
             ->leftJoin('u.campus', 'c')
             ->leftJoin('u.sortiesAsOrganisateur', 'sO')
             ->leftJoin('u.sortiesAsParticipant', 'sP')
             ->leftJoin('u.commentaires', 'com');
+
+        if ($count) {
+            $query = $query
+                ->select('COUNT(DISTINCT u)');
+        }
+        else {
+            $query = $query
+                ->select('u', 'c', 'sO', 'sP', 'com');
+        }
 
         if (!empty($searchUser->keyword)) {
             $query = $query

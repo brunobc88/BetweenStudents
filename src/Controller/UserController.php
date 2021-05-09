@@ -82,7 +82,7 @@ class UserController extends AbstractController
         $searchSortieFormType = $this->createForm(SearchSortieUserFormType::class, $searchSortie);
         $searchSortieFormType->handleRequest($request);
 
-        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie);
+        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie, 12);
         $nbreResultats = count($sortieRepository->findSearchSortie($searchSortie));
 
         return $this->render('user/sortie.html.twig', [
