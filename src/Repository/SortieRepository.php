@@ -82,7 +82,7 @@ class SortieRepository extends ServiceEntityRepository
                     $query->expr()->like('s.nom', ':keyword'),
                     $query->expr()->like('s.description', ':keyword')
                 ))
-                ->setParameter('keyword', "%{$searchSortie->keyword}%");
+                ->setParameter('keyword', "%$searchSortie->keyword%");
         }
 
         if ($administrateur) {

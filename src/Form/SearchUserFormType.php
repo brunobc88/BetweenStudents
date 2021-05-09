@@ -6,7 +6,7 @@ use App\Entity\Campus;
 use App\Services\SearchUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,13 +30,27 @@ class SearchUserFormType extends AbstractType
                 'choice_label' => 'nom',
                 'placeholder' => 'Campus'
             ])
-            ->add('isAdmin', CheckboxType::class, [
+            ->add('isAdmin', ChoiceType::class, [
                 'label' => 'Admin',
                 'required' => false,
+                'expanded' => true,
+                'multiple' => false,
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'placeholder' => 'Peu importe',
             ])
-            ->add('isActif', CheckboxType::class, [
+            ->add('isActif', ChoiceType::class, [
                 'label' => 'Actif',
                 'required' => false,
+                'expanded' => true,
+                'multiple' => false,
+                'choices' => [
+                    'Oui' => 'oui',
+                    'Non' => 'non',
+                ],
+                'placeholder' => 'Peu importe',
             ])
         ;
     }
@@ -50,7 +64,7 @@ class SearchUserFormType extends AbstractType
         ]);
     }
 
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return '';
     }

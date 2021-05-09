@@ -80,7 +80,7 @@ class EmailVerifier
         $this->mailer->send($email);
     }
 
-    public function sendEmailUserEtatCompte(User $user)
+    public function sendEmailUserEtatCompte(User $user): void
     {
         if ($user->getActif()) {
             $email = (new TemplatedEmail())

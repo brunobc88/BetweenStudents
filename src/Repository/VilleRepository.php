@@ -30,7 +30,7 @@ class VilleRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('v')
             ->andWhere('v.codePostal LIKE :value')
-            ->setParameter('value', "%{$value}%")
+            ->setParameter('value', "%$value%")
             ->orderBy('v.nom', 'ASC')
             ;
     }
@@ -68,7 +68,7 @@ class VilleRepository extends ServiceEntityRepository
                     $query->expr()->like('v.nom', ':keyword'),
                     $query->expr()->like('v.codePostal', ':keyword')
                 ))
-                ->setParameter('keyword', "%{$searchVille->keyword}%");
+                ->setParameter('keyword', "%$searchVille->keyword%");
         }
 
         return $query;

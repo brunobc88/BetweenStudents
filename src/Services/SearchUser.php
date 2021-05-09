@@ -22,12 +22,12 @@ class SearchUser
     public $campus;
 
     /**
-     * @var boolean
+     * @var string
      */
-    public $isAdmin = false;
+    public $isAdmin;
 
     /**
-     * @var boolean
+     * @var string
      */
-    public $isActif = true;
+    public $isActif;
 }

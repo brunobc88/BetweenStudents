@@ -14,7 +14,7 @@ App\Entity\Etat:
 
 
 App\Entity\Ville:
-  ville_{1..100}:
+  ville_{1..10000}:
     nom: '<city()>'
     codePostal: '<numberBetween(0, 9)><numberBetween(0, 9)>000'
 
@@ -56,11 +56,11 @@ App\Entity\User:
     prenom: '<firstName()>'
     telephone: '<e164PhoneNumber()>'
     pseudo: 'admin'
-    administrateur: '<numberBetween(1, 1)>'
-    actif: '<numberBetween(1, 1)>'
+    administrateur: '1'
+    actif: '1'
     urlImage: 'https://robohash.org/<numberBetween(0, 999)>.png?set=set<numberBetween(1, 4)>'
     campus: '@campus_*'
-    isVerified: '<numberBetween(1, 1)>'
+    isVerified: '1'
   user_{2..200}:
     email: '<email()>'
     roles: ['ROLE_USER']
@@ -69,11 +69,11 @@ App\Entity\User:
     prenom: '<firstName()>'
     telephone: '80%? <e164PhoneNumber()>'
     pseudo: '<username()>'
-    administrateur: '<numberBetween(0, 0)>'
-    actif: '<numberBetween(1, 1)>'
+    administrateur: '0'
+    actif: '95%? 1 : 0'
     urlImage: 'https://robohash.org/<numberBetween(0, 999)>.png?set=set<numberBetween(1, 4)>'
     campus: '@campus_*'
-    isVerified: '<numberBetween(1, 1)>'
+    isVerified: '1'
 
 
 App\Entity\Sortie:

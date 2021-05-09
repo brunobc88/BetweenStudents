@@ -96,7 +96,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     $query->expr()->like('u.prenom', ':keyword'),
                     $query->expr()->like('u.telephone', ':keyword')
                 ))
-                ->setParameter('keyword', "%{$searchUser->keyword}%");
+                ->setParameter('keyword', "%$searchUser->keyword%");
         }
 
         if (!empty($searchUser->campus)) {
@@ -105,20 +105,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->setParameter('campus', $searchUser->campus);
         }
 
-        if (!empty($searchUser->isAdmin)) {
+        if ($searchUser->isAdmin === 'oui') {
             $query = $query
                 ->andWhere('u.administrateur = 1');
         }
-        else {
+        elseif ($searchUser->isAdmin === 'non') {
             $query = $query
                 ->andWhere('u.administrateur = 0');
         }
 
-        if (!empty($searchUser->isActif)) {
+        if ($searchUser->isActif === 'oui') {
             $query = $query
                 ->andWhere('u.actif = 1');
         }
-        else {
+        elseif ($searchUser->isActif === 'non') {
             $query = $query
                 ->andWhere('u.actif = 0');
         }

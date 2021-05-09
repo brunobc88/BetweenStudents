@@ -34,9 +34,17 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin", name="app_admin")
      */
-    public function index(): Response
+    public function index(SortieRepository $sortieRepository, UserRepository $userRepository, VilleRepository $villeRepository, CampusRepository $campusRepository): Response
     {
-        return $this->render('admin/index.html.twig');
+        $nbreResultatsSortie = $sortieRepository->countResultSearchSortie(new SearchSortie(), true);
+        $nbreResultatsUser = $userRepository->countResultSearchUser(new SearchUser());
+        $nbreResultatsVille = $villeRepository->countResultSearchVille(new SearchVille());
+
+        return $this->render('admin/index.html.twig', [
+            'nbreResultatsSortie' => $nbreResultatsSortie,
+            'nbreResultatsUser' => $nbreResultatsUser,
+            'nbreResultatsVille' => $nbreResultatsVille,
+        ]);
     }
 
     /**
