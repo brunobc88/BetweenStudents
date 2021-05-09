@@ -5,10 +5,10 @@
 {% block body %}
     {% if error %}
         <div class="row">
-            <div class="ui error message">
-                <i class="close icon"></i>
+            <div class="ui error message manuel-close">
+                <i class="close icon" onclick="removeMessage()"></i>
                 <div class="header">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                    Error
                 </div>
                 <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
             </div>
@@ -41,5 +41,7 @@
 {% endblock %}
 
 {% block javascripts %}
-    <script>$('.ui.checkbox').checkbox();</script>
+    <script>
+        $('.ui.checkbox').checkbox();
+    </script>
 {% endblock %}

@@ -12,7 +12,7 @@
     <div class="ui grid stackable padded">
         <div class="column">
             <div class="row">
-                <h2>Liste des utilisateurs</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+                <h2 id="testXX">Liste des utilisateurs</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
             </div>
             <table class="ui celled striped table">
                 <thead>
@@ -73,17 +73,17 @@
                                 <i class="icon trash"></i>
                                 Supprimer l'utilisateur
                             </div>
-                            <div class="content ui right aligned">
-                                <p>Cette action est définitive. Confirmez-vous la suppression de l'utilisateur ?</p>
+                            <div class="row ui center aligned grid">
+                                <div class="column">Cette action est définitive. Confirmez-vous la suppression de l'utilisateur ?</div>
                             </div>
                             <div class="actions">
                                 <div class="ui red basic cancel inverted button">
                                     <i class="remove icon"></i>
-                                    No
+                                    Non
                                 </div>
                                 <a class="ui green ok inverted button">
                                     <i class="checkmark icon"></i>
-                                    Yes
+                                    Oui
                                 </a>
                             </div>
                         </div>
@@ -179,6 +179,7 @@
             }).then(response =>
                 response.json()
             ).then(data => {
+                document.querySelector('header').insertAdjacentHTML('beforeend', data.content);
                 history.pushState({}, null, Url.pathname);
             }).catch(e => alert(e));
 

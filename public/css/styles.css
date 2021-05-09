@@ -45,3 +45,10 @@
     right: 50px;
     z-index: 99;
 }
+
+.message-fixed {
+    position: fixed !important;
+    z-index: 99 !important;
+    top: 70px;
+    right: 20px;
+}

@@ -3,6 +3,12 @@
 {% block title %}Admin Sortie{% endblock %}
 
 {% block body %}
+    <div class="row">
+        {{ form_start(searchSortieFormType) }}
+        {{ form_widget(searchSortieFormType) }}
+        <button class="ui primary button" type="submit">Rechercher</button>
+        {{ form_end(searchSortieFormType) }}
+    </div>
     <div class="ui grid stackable padded">
         <div class="column">
             <div class="row">
@@ -14,6 +20,8 @@
                     <th>Id</th>
                     <th>Nom</th>
                     <th>Organisateur</th>
+                    <th>Campus</th>
+                    <th>Ville</th>
                     <th>Nbre participants</th>
                     <th>Nbre commentaires</th>
                     <th>Etat</th>
@@ -26,6 +34,8 @@
                         <td><a href="{{ path('app_sortie_detail', {'id': sortie.id}) }}" target="_blank">{{ sortie.id }}</a></td>
                         <td>{{ sortie.nom }}</td>
                         <td>{{ sortie.organisateur.pseudo }}</td>
+                        <td>{{ sortie.campus.nom }}</td>
+                        <td>{{ sortie.ville.codePostal }} {{ sortie.ville.nom }}</td>
                         <td>{{ sortie.participants | length }}</td>
                         <td>{{ sortie.commentaires | length }}</td>
                         <td>{{ sortie.etat.libelle }}</td>
@@ -43,17 +53,17 @@
                                     <i class="icon trash"></i>
                                     Supprimer la sortie
                                 </div>
-                                <div class="content ui right aligned">
-                                    <p>Cette action est définitive. Confirmez-vous la suppression de la sortie ?</p>
+                                <div class="row ui center aligned grid">
+                                    <div class="column">Cette action est définitive. Confirmez-vous la suppression de l'utilisateur ?</div>
                                 </div>
                                 <div class="actions">
                                     <div class="ui red basic cancel inverted button">
                                         <i class="remove icon"></i>
-                                        No
+                                        Non
                                     </div>
                                     <a class="ui green ok inverted button" href="{{ path('app_admin_sortie_delete', {'id': sortie.id}) }}">
                                         <i class="checkmark icon"></i>
-                                        Yes
+                                        Oui
                                     </a>
                                 </div>
                             </div>

@@ -54,6 +54,7 @@ class AdminController extends AbstractController
         $nbreResultats = $sortieRepository->countResultSearchSortie($searchSortie, true);
 
         return $this->render('admin/sortie.html.twig', [
+            'searchSortieFormType' => $searchSortieFormType->createView(),
             'tableauSorties' => $tableauSorties,
             'nbreResultats' => $nbreResultats,
         ]);
@@ -121,8 +122,10 @@ class AdminController extends AbstractController
                 }
             }
             $entityManager->flush();
+            $this->addFlash('success', 'Modification enregistrée');
 
             return new JsonResponse([
+                'content' => $this->renderView('inc/messageFlash.html.twig')
             ]);
         }
 
