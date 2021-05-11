@@ -19,7 +19,7 @@
                                 <i class="history icon"></i>
                             </div>
                         {% endif %}
-                        <a class="ui fluid image" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
+                        <a class="ui fluid image image-css-perso" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
                             {% if app.user == sortie.organisateur %}
                                 <div class="ui teal ribbon label">
                                     <i class="id badge icon"></i> Mes sorties
