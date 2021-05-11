@@ -1,108 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Profil {{ user.pseudo }}{% endblock %}
+{% block title %}Profil{% endblock %}
 
 {% block body %}
-
-{#    <h1>Profil</h1>#}
-{#    <p>{{ user.pseudo }}</p>#}
-{#    <p>{{ user.prenom }}</p>#}
-{#    <p>{{ user.nom }}</p>#}
-{#    <p>{{ user.telephone }}</p>#}
-{#    <p>{{ user.campus.nom }}</p>#}
-
-{#    {% if user.urlImage %}#}
-{#        {% if 'http' in user.urlImage %}#}
-{#            <img src="{{ user.urlImage }}" alt="Avatar User">#}
-{#        {% else %}#}
-{#            <img src="{{ asset('images/users/') ~ user.urlImage }}" alt="Avatar User">#}
-{#        {% endif %}#}
-{#    {% else %}#}
-{#        <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">#}
-{#    {% endif %}#}
-
-{#    <br><br>#}
-{#    <a class="ui primary button" href="{{ path('app_user_edit') }}">Modifier</a>#}
-
     <div class="ui grid container pad">
         <div class="row">
-
             <div class="sixteen wide mobile fourteen wide tablet fourteen wide computer centered column">
-            <div class="ui cards centered">
+                <div class="ui cards centered">
 
-                <div class="card">
-                    <div class="content">
-                        <div class="header"><i class="huge bicycle icon"></i></div>
-                        <div class="description">
-                            Voir toutes les sorties que j'organise et auxquelles je participe
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><i class="huge bicycle icon"></i></div>
+                            <div class="description">
+                                Voir toutes les sorties que j'organise et auxquelles je participe
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a class="ui button" href="{{ path('app_user_sortie') }}">Voir</a>
                         </div>
                     </div>
-                    <div class="extra content">
-                        <a class="ui button" href="{{ path('app_user_sortie') }}">Voir</a>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="content">
-                        <div class="header"><i class="huge user circle icon"></i></div>
-                        <div class="description">
-                            Pour modifier votre profil, c'est par là
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><i class="huge user circle icon"></i></div>
+                            <div class="description">
+                                Pour modifier votre profil, c'est par là
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a class="ui button" href="{{ path('app_user_edit') }}">Voir</a>
                         </div>
                     </div>
-                    <div class="extra content">
-                        <a class="ui button" href="{{ path('app_user_edit') }}">Voir</a>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="content">
-                        <div class="header"><i class="huge lock icon"></i></div>
-                        <div class="description">
-                            Protéger mon compte et mettre à jour mon mot de passe
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><i class="huge lock icon"></i></div>
+                            <div class="description">
+                                Protéger mon compte et mettre à jour mon mot de passe
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a class="ui button" href="{{ path('app_user_edit_password') }}">Voir</a>
                         </div>
                     </div>
-                    <div class="extra content">
-                        <a class="ui button">Voir</a>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="content">
-                        <div class="header"><i class="huge cogs icon"></i></div>
-                        <div class="description">
-                            Compléter et modifier vos préférences
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><i class="huge cogs icon"></i></div>
+                            <div class="description">
+                                Compléter et modifier vos préférences
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a class="ui button">Voir</a>
                         </div>
                     </div>
-                    <div class="extra content">
-                        <a class="ui button">Voir</a>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="content">
-                        <div class="header"><i class="huge rocket icon"></i></div>
-                        <div class="description">
-                            A venir
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><i class="huge rocket icon"></i></div>
+                            <div class="description">
+                                A venir
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a class="ui button">Voir</a>
                         </div>
                     </div>
-                    <div class="extra content">
-                        <a class="ui button">Voir</a>
-                    </div>
-                </div>
 
-                <div class="card">
-                    <div class="content">
-                        <div class="header"><i class="huge dolly icon"></i></div>
-                        <div class="description">
-                            A venir
+                    <div class="card">
+                        <div class="content">
+                            <div class="header"><i class="huge dolly icon"></i></div>
+                            <div class="description">
+                                A venir
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <a class="ui button">Voir</a>
                         </div>
                     </div>
-                    <div class="extra content">
-                        <a class="ui button">Voir</a>
-                    </div>
-                </div>
 
-            </div>
+                </div>
             </div>
         </div>
     </div>

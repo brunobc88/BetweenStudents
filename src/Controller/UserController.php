@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\ChangePasswordFormType;
 use App\Form\SearchSortieUserFormType;
 use App\Form\UserEditFormType;
 use App\Repository\SortieRepository;
@@ -18,13 +19,9 @@ class UserController extends AbstractController
     /**
      * @Route("/user", name="app_user")
      */
-    public function index(UserRepository $userRepository): Response
+    public function index(): Response
     {
-        $user = $userRepository->find($this->getUser());
-
-        return $this->render('user/index.html.twig', [
-            'user' => $user,
-        ]);
+        return $this->render('user/index.html.twig');
     }
 
     /**
@@ -58,6 +55,29 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'userForm' => $userForm->createView(),
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * @Route("/user/edit_password", name="app_user_edit_password")
+     */
+    public function editPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    {
+        $user = $userRepository->find($this->getUser());
+
+        $changePasswordFormType = $this->createForm(ChangePasswordFormType::class, $user);
+        $changePasswordFormType = $changePasswordFormType->handleRequest($request);
+
+        if ($changePasswordFormType->isSubmitted() && $changePasswordFormType->isValid()) {
+            $entityManager->flush();
+            $this->addFlash('success', 'Le mot de passe a été modifié');
+
+            return $this->redirectToRoute('app_user');
+        }
+
+        return $this->render('user/edit_password.html.twig', [
+            'changePasswordFormType' => $changePasswordFormType->createView(),
             'user' => $user,
         ]);
     }
