@@ -25,3 +25,15 @@
 /vendor/symfony/error-handler/*
 !/vendor/symfony/error-handler/Resources
 ###< exclure la page error ###
+
+###> exclure layout semantic ###
+!/vendor/symfony/twig-bridge/
+/vendor/symfony/twig-bridge/*
+!/vendor/symfony/twig-bridge/Resources
+/vendor/symfony/twig-bridge/Resources/*
+!/vendor/symfony/twig-bridge/Resources/views
+/vendor/symfony/twig-bridge/Resources/views/*
+!/vendor/symfony/twig-bridge/Resources/views/Form
+/vendor/symfony/twig-bridge/Resources/views/Form/*
+!/vendor/symfony/twig-bridge/Resources/views/Form/semantic-ui-form-theme.html.twig
+###< exclure layout semantic ###
