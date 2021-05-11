@@ -14,7 +14,16 @@
             {% if app.user %}
                 <a class="item" href="{{ path('app_user_sortie') }}">Mes sorties</a>
                 <div class="ui dropdown item">
-                    {{ app.user.pseudo }}<i class="dropdown icon"></i>
+                    {% if app.user.urlImage %}
+                        {% if 'http' in app.user.urlImage %}
+                            <img class="ui mini circular image" src="{{ app.user.urlImage }}" alt="avatar profil">
+                        {% else %}
+                            <img class="ui mini circular image" src="{{ asset('images/users/') ~ app.user.urlImage }}" alt="avatar profil">
+                        {% endif %}
+                    {% else %}
+                        <img class="ui mini circular image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar profil">
+                    {% endif %}
+                    &nbsp; {{ app.user.pseudo }}<i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" href="{{ path('app_user') }}">Mon profil</a>
                         <a class="item" href="{{ path('app_logout') }}">Déconnexion</a>
@@ -47,7 +56,7 @@
 
 <!-- Menu minified -->
 <div class="ui container">
-    <div class="ui large secondary inverted pointing menu black-color">
+    <div class="ui large secondary inverted pointing menu">
         <a class="toc item">
             <i class="sidebar icon"></i>
         </a>
