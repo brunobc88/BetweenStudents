@@ -19,6 +19,22 @@
                     {{ form_end(searchCampusFormType) }}
                 </div>
             </div>
+
+            <div class="sixteen wide mobile fourteen wide tablet eight wide computer column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Ajouter un campus</h3>
+                    {{ form_start(campusFormType) }}
+                    <div class="three fields">
+                        {{ form_row(campusFormType.nom) }}
+                        {{ form_row(campusFormType.codePostal) }}
+                        {{ form_row(campusFormType.ville) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(campusFormType.save) }}
+                    </div>
+                    {{ form_end(campusFormType) }}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -31,6 +47,8 @@
                     <th>Nom</th>
                     <th>Code Postal</th>
                     <th>Ville</th>
+                    <th>Nombre d'utilisateurs</th>
+                    <th>Nombre total de sorties</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -41,11 +59,20 @@
                         <td>{{ campus.nom }}</td>
                         <td>{{ campus.ville.codePostal }}</td>
                         <td>{{ campus.ville.nom }}</td>
+                        <td>{{ campus.users | length }}</td>
+                        <td>{{ campus.sorties | length }}</td>
                         <td class="right aligned collapsing">
-                            {#                            <button onclick="editUser({{ user.id }})" class="ui icon button" id="buttonEdit{{ user.id }}"><i class="edit icon"></i></button>#}
-                            {#                            <button onclick="modalSupprimerUser({{ user.id }})" class="ui icon button"><i class="trash icon"></i></button>#}
+                            <button class="ui icon button"><i class="edit icon"></i></button>
+                            <button onclick="modalSupprimer({{ campus.id }})" class="ui icon button"><i class="trash icon"></i></button>
                         </td>
                     </tr>
+                    <!-- modal -->
+                    <div class="ui dimmer modals page transition hidden">
+                        {% set label_modal_suppression = 'le campus' %}
+                        {% set elementSuppression = campus %}
+                        {% include("inc/modal-suppression.html.twig") %}
+                    </div>
+                    <!-- modal -->
                 {% endfor %}
                 </tbody>
             </table>
@@ -61,5 +88,15 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script>
+        function modalSupprimer(id) {
+            $('.ui.basic.modal.modalSupprimer'+id)
+                .modal('setting', 'closable', true)
+                .modal('show')
+            ;
+        }
+    </script>
+    <script src="{{ asset('js/requeteAjax.js') }}"></script>
+    <script>requeteAjaxGet('#campus_form_codePostal', 'change', '#campus_form_ville')</script>
 {% endblock %}
 

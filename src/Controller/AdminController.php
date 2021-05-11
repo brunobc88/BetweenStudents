@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Campus;
+use App\Form\CampusFormType;
 use App\Form\SearchCampusFormType;
 use App\Form\SearchSortieFormType;
 use App\Form\SearchUserFormType;
@@ -172,7 +174,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/campus", name="app_admin_campus")
      */
-    public function campus(Request $request, CampusRepository $campusRepository): Response
+    public function campus(Request $request, EntityManagerInterface $entityManager, CampusRepository $campusRepository, VilleRepository $villeRepository): Response
     {
         $searchCampus = new SearchCampus();
         $searchCampus->page = $request->get('page', 1);
@@ -183,15 +185,39 @@ class AdminController extends AbstractController
         $tableauCampus = $campusRepository->findSearchCampusPaginate($searchCampus, 24);
         $nbreResultats = $campusRepository->countResultSearchCampus($searchCampus);
 
+        $campus = new Campus();
+
+        $campusFormType = $this->createForm(CampusFormType::class, $campus);
+        $campusFormType->handleRequest($request);
+
+        if ($campusFormType->isSubmitted() && $campusFormType->isValid()) {
+            $entityManager->persist($campus);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le campus a bien été enregistré');
+            return $this->redirectToRoute('app_admin_campus');
+        }
+
+        if ($request->get('ajax') && $request->get('campus_form')['codePostal']) {
+            $codePostal = $request->get('campus_form')['codePostal'];
+
+            $villes = $villeRepository->findBy(array('codePostal' => $codePostal), array('nom' => 'ASC'), null, 0);
+
+            return new JsonResponse([
+                'content' => $this->renderView('sortie/content/_selectVille.html.twig', compact('villes'))
+            ]);
+        }
+
         return $this->render('admin/campus.html.twig', [
             'searchCampusFormType' => $searchCampusFormType->createView(),
+            'campusFormType' => $campusFormType->createView(),
             'tableauCampus' => $tableauCampus,
             'nbreResultats' => $nbreResultats,
         ]);
     }
 
     /**
-     * @Route("/admin/stat", name="app_admin_stat")
+     * @Route("/admin/statistique", name="app_admin_stat")
      */
     public function stat(SortieRepository $sortieRepository, UserRepository $userRepository, CampusRepository $campusRepository): Response
     {

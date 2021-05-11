@@ -41,7 +41,9 @@ class CampusRepository extends ServiceEntityRepository
     {
         $query = $this
             ->createQueryBuilder('c')
-            ->leftJoin('c.ville', 'v');
+            ->leftJoin('c.ville', 'v')
+            ->leftJoin('c.users', 'u')
+            ->leftJoin('c.sorties', 's');
 
         if ($count) {
             $query = $query
@@ -49,7 +51,7 @@ class CampusRepository extends ServiceEntityRepository
         }
         else {
             $query = $query
-                ->select('c', 'v');
+                ->select('c', 'v', 'u', 's');
         }
 
         if (!empty($searchCampus->keyword)) {

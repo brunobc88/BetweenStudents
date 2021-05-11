@@ -78,30 +78,14 @@
                         </td>
                         <td class="right aligned collapsing" id="divEdit{{ user.id }}">
                             <button onclick="editUser({{ user.id }})" class="ui icon button" id="buttonEdit{{ user.id }}"><i class="edit icon"></i></button>
-                            <button onclick="modalSupprimerUser({{ user.id }})" class="ui icon button"><i class="trash icon"></i></button>
+                            <button onclick="modalSupprimer({{ user.id }})" class="ui icon button"><i class="trash icon"></i></button>
                         </td>
                     </tr>
                     <!-- modal -->
                     <div class="ui dimmer modals page transition hidden">
-                        <div class="ui small basic test modal modalSupprimerUser{{ user.id }} transition hidden">
-                            <div class="ui icon header">
-                                <i class="icon trash"></i>
-                                Supprimer l'utilisateur
-                            </div>
-                            <div class="row ui center aligned grid">
-                                <div class="column">Cette action est définitive. Confirmez-vous la suppression de l'utilisateur ?</div>
-                            </div>
-                            <div class="actions">
-                                <div class="ui red basic cancel inverted button">
-                                    <i class="remove icon"></i>
-                                    Non
-                                </div>
-                                <a class="ui green ok inverted button">
-                                    <i class="checkmark icon"></i>
-                                    Oui
-                                </a>
-                            </div>
-                        </div>
+                        {% set label_modal_suppression = 'l\'utilisateur' %}
+                        {% set elementSuppression = user %}
+                        {% include("inc/modal-suppression.html.twig") %}
                         {% set elementUser = user %}
                         {% include("inc/modal-user.html.twig") %}
                     </div>
@@ -130,9 +114,9 @@
                 .modal('show')
             ;
         }
-        function modalSupprimerUser(id) {
-            $('.basic.test.modal.modalSupprimerUser'+id)
-                .modal('setting', 'closable', false)
+        function modalSupprimer(id) {
+            $('.ui.basic.modal.modalSupprimer'+id)
+                .modal('setting', 'closable', true)
                 .modal('show')
             ;
         }
@@ -142,14 +126,14 @@
                 document.getElementById('checkboxActif'+id).disabled = false;
                 document.getElementById('divEdit'+id).innerHTML = '' +
                     '<button onclick="editUser('+id+')" class="ui icon button" id="buttonEdit'+id+'"><i class="check icon"></i></button>' +
-                    '<button onclick="modalSupprimerUser('+id+')" class="ui icon button"><i class="trash icon"></i></button>';
+                    '<button onclick="modalSupprimer('+id+')" class="ui icon button"><i class="trash icon"></i></button>';
             }
             else {
                 document.getElementById('checkboxAdmin'+id).disabled = true;
                 document.getElementById('checkboxActif'+id).disabled = true;
                 document.getElementById('divEdit'+id).innerHTML = '' +
                     '<button onclick="editUser('+id+')" class="ui icon button" id="buttonEdit'+id+'"><i class="edit icon"></i></button>' +
-                    '<button onclick="modalSupprimerUser('+id+')" class="ui icon button"><i class="trash icon"></i></button>';
+                    '<button onclick="modalSupprimer('+id+')" class="ui icon button"><i class="trash icon"></i></button>';
             }
         }
         function requeteAjaxEdit(id, selector) {
