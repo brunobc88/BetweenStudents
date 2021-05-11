@@ -159,7 +159,7 @@ class SortieController extends AbstractController
     /**
      * @Route("/sortie/{id}/edit", name="app_sortie_edit", requirements={"id"="\d+"})
      */
-    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository, UserRepository $userRepository): Response
+    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, SortieRepository $sortieRepository, EtatRepository $etatRepository, UserRepository $userRepository, VilleRepository $villeRepository): Response
     {
         $sortie = $sortieRepository->find($id);
 
@@ -173,11 +173,17 @@ class SortieController extends AbstractController
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
 
-            if (!$sortieForm->get('etat')->getData() && $sortieClone->getEtat()->getLibelle() === 1) {
-                $etat = $etatRepository->find(1); // état = créée
-                $reponse = 'sauvegardée';
-            } else {
-                $etat = $etatRepository->find(2); // état = publiée
+            if ($sortieClone->getEtat()->getId() === 1) {
+                if (!$sortieForm->get('etat')->getData()) {
+                    $reponse = 'sauvegardée';
+                }
+                else {
+                    $etat = $etatRepository->find(2); // état = publiée
+                    $reponse = 'publiée';
+                    $sortie->setEtat($etat);
+                }
+            }
+            else {
                 $reponse = 'publiée';
             }
 
@@ -192,7 +198,7 @@ class SortieController extends AbstractController
 
             // TODO prévoir l'ajout de plusieurs images
 
-            $sortie->setEtat($etat);
+
             $user = $userRepository->find($this->getUser());
             $sortie->setOrganisateur($user);
             $sortie->setCampus($user->getCampus());
@@ -203,6 +209,16 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('app_sortie_detail', ["id" => $sortie->getId()]);
         }
         // TODO gérer erreur losque dateDebut ou DateCloture est null ou DateCloture après dateDebut. Constraints ne marche pas
+
+        if ($request->get('ajax') && $request->get('sortie_form')['codePostal']) {
+            $codePostal = $request->get('sortie_form')['codePostal'];
+
+            $villes = $villeRepository->findBy(array('codePostal' => $codePostal), array('nom' => 'ASC'), null, 0);
+
+            return new JsonResponse([
+                'content' => $this->renderView('sortie/content/_selectVille.html.twig', compact('villes'))
+            ]);
+        }
 
         return $this->render('sortie/edit.html.twig', [
             'sortieForm' => $sortieForm->createView(),

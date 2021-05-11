@@ -1,0 +1,39 @@
+<div class="ui small test modal modalAfficherUser{{ elementUser.id }} transition hidden">
+    <div class="header">
+        Profil
+    </div>
+    <div class="image content">
+        <div class="ui circular medium image">
+            {% if elementUser.urlImage %}
+                {% if 'http' in elementUser.urlImage %}
+                    <img class="ui medium image" src="{{ elementUser.urlImage }}" alt="avatar user">
+                {% else %}
+                    <img class="ui medium image" src="{{ asset('images/users/') ~ elementUser.urlImage }}" alt="avatar user">
+                {% endif %}
+            {% else %}
+                <img class="ui medium image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar user">
+            {% endif %}
+        </div>
+        <div class="description">
+            <div class="ui header">Pseudo : {{ elementUser.pseudo }}</div>
+            {% if app.user and app.user.roles == ["ROLE_ADMIN"] %}
+                <p>Id : {{ elementUser.id }}</p>
+            {% endif %}
+            <p>Nom : {{ elementUser.nom }}</p>
+            <p>Prénom : {{ elementUser.prenom }}</p>
+            <p>Téléphone : {{ elementUser.telephone }}</p>
+            <p>Email : {{ elementUser.email }}</p>
+            <p>Campus : {{ elementUser.campus.nom }}</p>
+            {% if app.user and app.user.roles == ["ROLE_ADMIN"] %}
+                <p>Administrateur : {{ elementUser.administrateur ? 'Oui' : 'Non' }}</p>
+                <p>Actif : {{ elementUser.actif ? 'Oui' : 'Non' }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="actions">
+        <div class="ui deny button">
+            Fermer
+        </div>
+    </div>
+</div>
+

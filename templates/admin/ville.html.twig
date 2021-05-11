@@ -1,20 +1,27 @@
 {% extends 'base_admin.html.twig' %}
 
-{% block title %}Admin Ville{% endblock %}
+{% block title %}Admin Villes{% endblock %}
 
 {% block body %}
-    <div class="ui grid padded">
+    <div class="ui grid container padded">
         <div class="row">
-            <div class="four wide column">
-                <h2>Liste des villes</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            <div class="sixteen wide mobile fourteen wide tablet eight wide computer column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Liste des villes</h3>
+                    {{ form_start(searchVilleFormType) }}
+                    <div class="field">
+                        {{ form_row(searchVilleFormType.keyword) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(searchVilleFormType.save) }}
+                        ({{ nbreResultats ? nbreResultats : 0 }} résultats)
+                    </div>
+                    {{ form_end(searchVilleFormType) }}
+                </div>
             </div>
         </div>
-        <div class="four wide column">
-            {{ form_start(searchVilleFormType) }}
-            {{ form_widget(searchVilleFormType) }}
-            {{ form_end(searchVilleFormType) }}
-        </div>
     </div>
+
     <div class="ui grid stackable padded">
         <div class="column">
             <table class="ui celled striped table">

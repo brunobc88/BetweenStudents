@@ -1,20 +1,32 @@
 {% extends 'base_admin.html.twig' %}
 
-{% block title %}Admin Utilisateur{% endblock %}
+{% block title %}Admin Utilisateurs{% endblock %}
 
 {% block body %}
-    <div class="ui grid padded">
+    <div class="ui grid container padded">
         <div class="row">
-            <div class="four wide column">
-                <h2>Liste des utilisateurs</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            <div class="sixteen wide mobile fourteen wide tablet eight wide computer column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Liste des utilisateurs</h3>
+                    {{ form_start(searchUserFormType) }}
+                    <div class="two fields">
+                        {{ form_row(searchUserFormType.keyword) }}
+                        {{ form_row(searchUserFormType.campus) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(searchUserFormType.isAdmin) }}
+                        {{ form_row(searchUserFormType.isActif) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(searchUserFormType.save) }}
+                        ({{ nbreResultats ? nbreResultats : 0 }} résultats)
+                    </div>
+                    {{ form_end(searchUserFormType) }}
+                </div>
             </div>
         </div>
-        <div class="four wide column">
-            {{ form_start(searchUserFormType) }}
-            {{ form_widget(searchUserFormType) }}
-            {{ form_end(searchUserFormType) }}
-        </div>
     </div>
+
     <div class="ui grid stackable padded">
         <div class="column">
             <table class="ui celled striped table">
@@ -71,7 +83,7 @@
                     </tr>
                     <!-- modal -->
                     <div class="ui dimmer modals page transition hidden">
-                        <div class="ui small basic test modal modalAnnulerSortie{{ user.id }} transition hidden">
+                        <div class="ui small basic test modal modalSupprimerUser{{ user.id }} transition hidden">
                             <div class="ui icon header">
                                 <i class="icon trash"></i>
                                 Supprimer l'utilisateur
@@ -90,40 +102,8 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="ui standard test modal modalAfficherSortie{{ user.id }} transition hidden">
-                            <div class="header">
-                                Profil
-                            </div>
-                            <div class="image content">
-                                <div class="ui medium image">
-                                    {% if user.urlImage %}
-                                        {% if 'http' in user.urlImage %}
-                                            <img src="{{ user.urlImage }}" alt="Avatar User">
-                                        {% else %}
-                                            <img src="{{ asset('images/users/') ~ user.urlImage }}" alt="Avatar User">
-                                        {% endif %}
-                                    {% else %}
-                                        <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
-                                    {% endif %}
-                                </div>
-                                <div class="description">
-                                    <div class="ui header">Pseudo : {{ user.pseudo }}</div>
-                                    <p>Id : {{ user.id }}</p>
-                                    <p>Nom : {{ user.nom }}</p>
-                                    <p>Prénom : {{ user.prenom }}</p>
-                                    <p>Téléphone : {{ user.telephone }}</p>
-                                    <p>Email : {{ user.email }}</p>
-                                    <p>Campus : {{ user.campus.nom }}</p>
-                                    <p>Admin : {{ user.administrateur ? 'Oui' : 'Non' }}</p>
-                                    <p>Actif : {{ user.actif ? 'Oui' : 'Non' }}</p>
-                                </div>
-                            </div>
-                            <div class="actions">
-                                <div class="ui black deny button">
-                                    Fermer
-                                </div>
-                            </div>
-                        </div>
+                        {% set elementUser = user %}
+                        {% include("inc/modal-user.html.twig") %}
                     </div>
                     <!-- modal -->
                 {% endfor %}
@@ -146,12 +126,12 @@
             .checkbox()
         ;
         function modalAfficherUser(id) {
-            $('.ui.modal.modalAfficherSortie'+id)
+            $('.ui.modal.modalAfficherUser'+id)
                 .modal('show')
             ;
         }
         function modalSupprimerUser(id) {
-            $('.basic.test.modal.modalAnnulerSortie'+id)
+            $('.basic.test.modal.modalSupprimerUser'+id)
                 .modal('setting', 'closable', false)
                 .modal('show')
             ;

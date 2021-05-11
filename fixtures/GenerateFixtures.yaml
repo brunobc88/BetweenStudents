@@ -79,7 +79,7 @@ App\Entity\User:
 App\Entity\Sortie:
   sortie_{1..400}:
     nom: '<sentence(3, true)>'
-    description: '<paragraph(3, true)>'
+    description: '<paragraph(6, true)>'
     nbreInscriptionMax: '<numberBetween(2, 20)>'
     dateDebut: '<dateTimeBetween("-100 days", "+100 days")>'
     dateClotureInscription: '<dateTimeInInterval($dateDebut, "-10 days")>'

@@ -1,18 +1,18 @@
 {% for commentaire in commentaires %}
     <div class="comment">
-        <a class="avatar">
+        <div class="avatar">
             {% if commentaire.auteur.urlImage %}
                 {% if 'http' in commentaire.auteur.urlImage %}
-                    <img src="{{ commentaire.auteur.urlImage }}" alt="Avatar User">
+                    <img src="{{ commentaire.auteur.urlImage }}" alt="avatar auteur">
                 {% else %}
-                    <img src="{{ asset('images/users/') ~ commentaire.auteur.urlImage }}" alt="Avatar User">
+                    <img src="{{ asset('images/users/') ~ commentaire.auteur.urlImage }}" alt="avatar auteur">
                 {% endif %}
             {% else %}
-                <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
+                <img src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar auteur">
             {% endif %}
-        </a>
+        </div>
         <div class="content">
-            <a class="author">{{ commentaire.auteur.pseudo }}</a>
+            <a onclick="modalAfficherUser({{ commentaire.auteur.id }})" class="author">{{ commentaire.auteur.pseudo }}</a>
             <div class="metadata">
                 <span class="date">{{ commentaire.date | date('d/m/Y à H:i') }}</span>
             </div>
@@ -21,4 +21,10 @@
             </div>
         </div>
     </div>
+    <!-- modal -->
+    <div class="ui dimmer modals page transition hidden">
+        {% set elementUser = commentaire.auteur %}
+        {% include("inc/modal-user.html.twig") %}
+    </div>
+    <!-- modal -->
 {% endfor %}

@@ -3,18 +3,25 @@
 {% block title %}Admin Campus{% endblock %}
 
 {% block body %}
-    <div class="ui grid padded">
+    <div class="ui grid container padded">
         <div class="row">
-            <div class="four wide column">
-                <h2>Liste des campus</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            <div class="sixteen wide mobile fourteen wide tablet eight wide computer column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Liste des campus</h3>
+                    {{ form_start(searchCampusFormType) }}
+                    <div class="field">
+                        {{ form_row(searchCampusFormType.keyword) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(searchCampusFormType.save) }}
+                        ({{ nbreResultats ? nbreResultats : 0 }} résultats)
+                    </div>
+                    {{ form_end(searchCampusFormType) }}
+                </div>
             </div>
         </div>
-        <div class="four wide column">
-            {{ form_start(searchCampusFormType) }}
-            {{ form_widget(searchCampusFormType) }}
-            {{ form_end(searchCampusFormType) }}
-        </div>
     </div>
+
     <div class="ui grid stackable padded">
         <div class="column">
             <table class="ui celled striped table">

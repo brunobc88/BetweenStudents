@@ -10,15 +10,29 @@
             <div class="ui four stackable doubling cards">
                 {% for sortie in tableauSorties %}
                     <div class="card">
-                        <a class="image-css-perso" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
+                        {% if sortie.etat.id == 1 %}
+                            <div class="ui teal right corner label">
+                                <i class="save icon"></i>
+                            </div>
+                        {% elseif sortie.etat.id == 3 or sortie.etat.id == 4 %}
+                            <div class="ui red right corner label">
+                                <i class="history icon"></i>
+                            </div>
+                        {% endif %}
+                        <a class="ui fluid image" href="{{ path('app_sortie_detail', {'id': sortie.id}) }}">
+                            {% if app.user == sortie.organisateur %}
+                                <div class="ui teal ribbon label">
+                                    <i class="id badge icon"></i> Mes sorties
+                                </div>
+                            {% endif %}
                             {% if sortie.images is not empty %}
                                 {% if 'http' in sortie.images[0].urlImage %}
-                                    <img src="{{ sortie.images[0].urlImage }}" alt="Image Sortie">
+                                    <img src="{{ sortie.images[0].urlImage }}" alt="image sortie">
                                 {% else %}
-                                    <img src="{{ asset('images/sorties/') ~ sortie.images[0].urlImage }}" alt="Image Sortie">
+                                    <img src="{{ asset('images/sorties/') ~ sortie.images[0].urlImage }}" alt="image sortie">
                                 {% endif %}
                             {% else %}
-                                <img src="{{ asset('images/divers/no-image-sortie.png') }}" alt="Image Sortie">
+                                <img src="{{ asset('images/divers/no-image-sortie.png') }}" alt="image sortie">
                             {% endif %}
                         </a>
                         <div class="content">

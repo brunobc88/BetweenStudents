@@ -32,10 +32,10 @@ class ChangePasswordFormType extends AbstractType
                             'maxMessage' => 'Votre mot de passe doit contenir au maximum {{ limit }} caractères',
                         ]),
                     ],
-                    'label' => 'Nouveau Mot de passe',
+                    'label' => 'Nouveau mot de passe',
                 ],
                 'second_options' => [
-                    'label' => 'Confirmation Mot de passe',
+                    'label' => 'Confirmation mot de passe',
                 ],
                 'invalid_message' => 'Les champs du "Mot de passe" doivent correspondre',
             ])

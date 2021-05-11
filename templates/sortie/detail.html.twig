@@ -3,133 +3,204 @@
 {% block title %}Sortie {{ sortie.nom }}{% endblock %}
 
 {% block body %}
+    <div class="ui grid container pad">
+        <div class="row">
 
-    <h1>{{ sortie.nom }}</h1>
-    <p>{{ sortie.organisateur.pseudo }}</p>
-    <p>{{ sortie.description }}</p>
-    <p>{{ sortie.dateDebut | date('d/m/Y à H:i') }}</p>
-    <p>{{ sortie.dateClotureInscription | date('d/m/Y à H:i') }}</p>
-    <a class="button-modal">{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} participants</a>
-    <div class="ui longer modal">
-        <div class="header">Liste des participants</div>
-        <div class="scrolling content">
-            {% for participant in sortie.participants %}
+            <div class="sixteen wide mobile fourteen wide tablet ten wide computer centered column">
                 <div class="row">
-                    <a href="#modal-participant-{{ participant.pseudo }}">{{ participant.pseudo }}</a>
-                    <div id="modal-participant-{{ participant.pseudo }}" class="modal-bloc">
-                        <div class="ui card">
-                            <a href="#" class="modal-close"><i class="close icon"></i></a>
-                            <div class="image">
-                                {% if participant.urlImage %}
-                                    {% if 'http' in participant.urlImage %}
-                                        <img src="{{ participant.urlImage }}" alt="Avatar User">
-                                    {% else %}
-                                        <img src="{{ asset('images/users/') ~ participant.urlImage }}" alt="Avatar User">
-                                    {% endif %}
+                    <div class="column">
+                        <div class="ui huge rounded image">
+                            {% if sortie.images is not empty %}
+                                {% if 'http' in sortie.images[0].urlImage %}
+                                    <img src="{{ sortie.images[0].urlImage }}" style="width: 100%; object-fit: cover; height: 500px;" alt="image sortie">
                                 {% else %}
-                                    <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
+                                    <img src="{{ asset('images/sorties/') ~ sortie.images[0].urlImage }}" style="width: 100%; object-fit: cover; height: 500px;" alt="image sortie">
                                 {% endif %}
+                            {% else %}
+                                <img src="{{ asset('images/divers/no-image-sortie.png') }}" style="width: 100%; object-fit: cover; height: 500px;" alt="image sortie">
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="column">
+
+                        <h2>{{ sortie.nom }}</h2>
+                        <h5 class="ui horizontal divider header">
+                            <i class="tag icon"></i>
+                            Description
+                        </h5>
+                        <p>{{ sortie.description }}</p>
+                        <h5 class="ui horizontal divider header">
+                            <i class="tag icon"></i>
+                            Détails
+                        </h5>
+                        <div class="ui statistics">
+                            <div class="statistic">
+                                <div class="value">
+                                    <a class="button-modal" style="color: #1b1c1d; cursor: pointer">
+                                        {{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }}
+                                    </a>
+                                </div>
+                                <div class="label">
+                                    Participants
+                                </div>
                             </div>
-                            <div class="content">
-                                <div class="header">{{ participant.pseudo }}</div>
-                                <div class="meta">
-                                    <p>{{ participant.nom }}</p>
-                                    <p>{{ participant.prenom }}</p>
-                                    <p>{{ participant.email }}</p>
-                                    <p>{{ participant.telephone }}</p>
+                            <div class="statistic">
+                                <div class="text value">
+                                    {{ sortie.dateDebut | date('d/m/Y') }}<br>
+                                    <span style="font-size: 1rem">à </span>{{ sortie.dateDebut | date('H:i') }}
+                                </div>
+                                <div class="label">
+                                    Date rdv
+                                </div>
+                            </div>
+                            <div class="statistic">
+                                <div class="value">
+                                    {% set heures = sortie.duree/60 %}
+                                    {% set minutes = sortie.duree%60 %}
+                                    {{ heures | round(0, 'floor') }}<span style="font-size: 1rem">h</span>{{ minutes }}<span style="font-size: 1rem"> min</span>
+                                </div>
+                                <div class="label">
+                                    Durée
+                                </div>
+                            </div>
+                        </div>
+                        <h5 class="ui horizontal divider header">
+                            <i class="tag icon"></i>
+                            Adresse
+                        </h5>
+                        <p>{{ sortie.rue }}, {{ sortie.ville.codePostal }} {{ sortie.ville.nom }}</p>
+
+                        <div class="ui longer modal">
+                            <div class="header">Liste des participants</div>
+                            <div class="scrolling content">
+                                <div class="ui grid doubling three column row">
+                                    <div class="row">
+                                        {% for participant in sortie.participants %}
+                                            <div class="column padding">
+                                                <a onclick="modalAfficherUser({{ participant.id }})" style="cursor: pointer;">
+                                                    {% if participant.urlImage %}
+                                                        {% if 'http' in participant.urlImage %}
+                                                            <img class="ui avatar image" src="{{ participant.urlImage }}" alt="avatar participant">
+                                                        {% else %}
+                                                            <img class="ui avatar image" src="{{ asset('images/users/') ~ participant.urlImage }}" alt="avatar participant">
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <img class="ui avatar image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar participant">
+                                                    {% endif %}
+                                                    {{ participant.pseudo }}</a>
+                                            </div>
+                                            <!-- modal -->
+                                            <div class="ui dimmer modals page transition hidden">
+                                                {% set elementUser = participant %}
+                                                {% include("inc/modal-user.html.twig") %}
+                                            </div>
+                                            <!-- modal -->
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
-    </div>
+            </div>
 
-    <br><br>
-
-    {% if (app.user in sortie.participants) %}
-        <a class="ui primary button" href="{{ path('app_sortie_unsubscribe', {'id': sortie.id}) }}">Se désinscrire</a>
-    {% else %}
-        <a class="ui primary button" href="{{ path('app_sortie_subscribe', {'id': sortie.id}) }}">S'inscrire</a>
-    {% endif %}
-    <br><br>
-    <a class="ui primary button" href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
-    <br><br>
-    <a class="ui primary button" href="{{ path('app_sortie_delete', {'id': sortie.id}) }}">Supprimer</a>
-
-    {#    ------------------------------------------------------------------------#}
-
-    <br><br><br>
-    <div class="ui comments">
-        <h3 class="ui dividing header">Commentaires</h3>
-        <div class="row">
-            <form class="ui reply form" id="formAddNewCommentaire" method="post">
-                <div class="field">
-                    <label>
-                        <textarea name="inputNewCommentaireTexte"></textarea>
-                    </label>
-                </div>
-                <button class="ui blue labeled submit icon button" id="buttonAddNewCommentaire"><i class="icon edit"></i>Add Reply</button>
-            </form>
-        </div>
-        <div class="row" id="contentCommentaires">
-            {% for commentaire in commentaires %}
-                <div class="comment">
-                    <div class="avatar">
-                        {% if commentaire.auteur.urlImage %}
-                            {% if 'http' in commentaire.auteur.urlImage %}
-                                <img src="{{ commentaire.auteur.urlImage }}" alt="Avatar User">
-                            {% else %}
-                                <img src="{{ asset('images/users/') ~ commentaire.auteur.urlImage }}" alt="Avatar User">
-                            {% endif %}
-                        {% else %}
-                            <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
-                        {% endif %}
-                    </div>
-                    <div class="content">
-                        <a href="#modal-commentaire-{{ commentaire.auteur.pseudo }}" class="author">{{ commentaire.auteur.pseudo }}</a>
-                        <div class="metadata">
-                            <span class="date">{{ commentaire.date | date('d/m/Y à H:i') }}</span>
-                        </div>
-                        <div class="text">
-                            {{ commentaire.texte }}
-                        </div>
-                    </div>
-                </div>
-                <div id="modal-commentaire-{{ commentaire.auteur.pseudo }}" class="modal-bloc">
-                    <div class="ui card">
-                        <a href="#" class="modal-close"><i class="close icon"></i></a>
-                        <div class="image">
-                            {% if commentaire.auteur.urlImage %}
-                                {% if 'http' in commentaire.auteur.urlImage %}
-                                    <img src="{{ commentaire.auteur.urlImage }}" alt="Avatar User">
-                                {% else %}
-                                    <img src="{{ asset('images/users/') ~ commentaire.auteur.urlImage }}" alt="Avatar User">
-                                {% endif %}
-                            {% else %}
-                                <img src="{{ asset('images/divers/no-image-user.png') }}" alt="Avatar User">
-                            {% endif %}
-                        </div>
+            <div class="sixteen wide mobile fourteen wide tablet six wide computer centered column">
+                <div class="ui cards">
+                    <div class="card" style="width: 100%">
                         <div class="content">
-                            <div class="header">{{ commentaire.auteur.pseudo }}</div>
-                            <div class="meta">
-                                <p>{{ commentaire.auteur.nom }}</p>
-                                <p>{{ commentaire.auteur.prenom }}</p>
-                                <p>{{ commentaire.auteur.email }}</p>
-                                <p>{{ commentaire.auteur.telephone }}</p>
+                            <div class="header">
+                                <div class="ui tiny image">
+                                    {% if sortie.organisateur.urlImage %}
+                                        {% if 'http' in sortie.organisateur.urlImage %}
+                                            <img class="ui small circular image" src="{{ sortie.organisateur.urlImage }}" alt="avatar organisateur">
+                                        {% else %}
+                                            <img class="ui small circular image" src="{{ asset('images/users/') ~ sortie.organisateur.urlImage }}" alt="avatar organisateur">
+                                        {% endif %}
+                                    {% else %}
+                                        <img class="ui small circular image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar organisateur">
+                                    {% endif %}
+                                </div>
+                                <a onclick="modalAfficherUser({{ sortie.organisateur.id }})">{{ sortie.organisateur.pseudo }}</a>
+                            </div>
+                            <div class="ui divider"></div>
+                            <div class="description">
+                                /
                             </div>
                         </div>
+                        {% if (app.user == sortie.organisateur) %}
+                            <div class="ui two buttons">
+                                <a class="ui teal button" href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
+                                <div class="or"></div>
+                                <a class="ui button" href="{{ path('app_sortie_delete', {'id': sortie.id}) }}">Supprimer</a>
+                            </div>
+                            <br>
+                        {% endif %}
+                        {% if (app.user in sortie.participants) %}
+                            <a class="ui bottom attached button" href="{{ path('app_sortie_unsubscribe', {'id': sortie.id}) }}">
+                                Se désinscrire
+                            </a>
+                        {% else %}
+                            {% if sortie.participants | length < sortie.nbreInscriptionMax %}
+                                <a class="ui bottom attached teal button" href="{{ path('app_sortie_subscribe', {'id': sortie.id}) }}">
+                                    <i class="add icon"></i>
+                                    S'inscrire
+                                </a>
+                            {% else %}
+                                <div class="ui bottom attached green button">
+                                    Complet
+                                </div>
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+            <!-- modal -->
+            <div class="ui dimmer modals page transition hidden">
+                {% set elementUser = sortie.organisateur %}
+                {% include("inc/modal-user.html.twig") %}
+            </div>
+            <!-- modal -->
 
+        </div>
+        <div class="row">
+
+            <div class="sixteen wide mobile fourteen wide tablet ten wide computer centered column">
+                <h3 class="ui dividing header">Commentaires</h3>
+                <div class="ui comments">
+                    <div class="row" id="contentCommentaires">
+                        {% include("sortie/content/_commentaires.html.twig") %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="sixteen wide mobile fourteen wide tablet six wide computer centered column">
+                <h3 class="ui dividing header">Posez votre question</h3>
+                <form class="ui reply form" id="formAddNewCommentaire" method="post">
+                    <div class="field">
+                        <label>
+                            <textarea name="inputNewCommentaireTexte"></textarea>
+                        </label>
+                    </div>
+                    <button class="ui teal labeled submit icon button" id="buttonAddNewCommentaire"><i class="icon edit"></i>Envoyer</button>
+                </form>
+            </div>
+
+        </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
-    <script>$('.ui.longer.modal').modal('attach events', '.button-modal', 'show');</script>
+    <script>
+        $('.ui.longer.modal').modal('attach events', '.button-modal', 'show');
+
+        function modalAfficherUser(id) {
+            $('.ui.modal.modalAfficherUser'+id)
+                .modal('show')
+            ;
+        }
+    </script>
     <script src="{{ asset('js/requeteAjax.js') }}"></script>
     <script>requeteAjaxPost('#formAddNewCommentaire', '#buttonAddNewCommentaire', 'click', '#contentCommentaires')</script>
 {% endblock %}
