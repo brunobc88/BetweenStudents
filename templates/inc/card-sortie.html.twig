@@ -63,8 +63,8 @@
                             <span><i class="user icon"></i>{{ sortie.participants | length }}/{{ sortie.nbreInscriptionMax }} pers</span>
                         </div>
                         {% set ratio = ((sortie.participants | length) / sortie.nbreInscriptionMax) * 100 %}
-                        <div class="ui bottom attached progress">
-                            <div class="bar" style="width: {{ ratio }}%;">
+                        <div class="ui bottom attached progress {{ ratio > 80 ? 'green' : ratio > 60 ? 'olive' : ratio > 40 ? 'orange' : ratio > 20 ? 'red' : '' }}">
+                            <div class="bar" style="width: {{ ratio }}%">
                             </div>
                         </div>
                     </div>
