@@ -1,3 +1,9 @@
+.background-header {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("../images/divers/background-header.jpg") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+}
+
 .image-css-perso {
     height: 250px;
 }

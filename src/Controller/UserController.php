@@ -58,6 +58,7 @@ class UserController extends AbstractController
 
         return $this->render('user/edit.html.twig', [
             'userForm' => $userForm->createView(),
+            'user' => $user,
         ]);
     }
 
@@ -79,14 +80,14 @@ class UserController extends AbstractController
             $searchSortie->both = $user;
         }
 
-        $searchSortieFormType = $this->createForm(SearchSortieUserFormType::class, $searchSortie);
-        $searchSortieFormType->handleRequest($request);
+        $searchSortieUserFormType = $this->createForm(SearchSortieUserFormType::class, $searchSortie);
+        $searchSortieUserFormType->handleRequest($request);
 
         $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie, 12);
         $nbreResultats = $sortieRepository->countResultSearchSortie($searchSortie);
 
         return $this->render('user/sortie.html.twig', [
-            'searchSortieFormType' => $searchSortieFormType->createView(),
+            'searchSortieUserFormType' => $searchSortieUserFormType->createView(),
             'tableauSorties' => $tableauSorties,
             'nbreResultats' => $nbreResultats,
         ]);

@@ -7,14 +7,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles_admin.css') }}">
     {% block stylesheets %}{% endblock %}
-
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 </head>
 <body>
 <header>
     {% include("inc/navbar_admin.html.twig") %}
-    {% include("inc/messageFlash.html.twig") %}
+    {% include("inc/message-flash.html.twig") %}
 </header>
 
 <div class="pusher">
@@ -23,11 +20,14 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 <script>
     $(document).ready(function() {
         $('.ui.dropdown').dropdown();
+
         $('.sidebar-menu-toggler').on('click', function() {
-            var target = $(this).data('target');
+            let target = $(this).data('target');
             $(target)
                 .sidebar({
                     dinPage: true,
@@ -36,11 +36,11 @@
                 })
                 .sidebar('toggle');
         });
-    });
 
-    setTimeout(function(){
-        $('.message.auto-close').closest('.message').transition('fade');
-    }, 5000 );
+        setTimeout(function(){
+            $('.message.auto-close').closest('.message').transition('fade');
+        }, 5000 );
+    });
 
     function removeMessage() {
         $('.message.manuel-close').remove();

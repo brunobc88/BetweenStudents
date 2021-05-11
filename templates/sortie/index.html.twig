@@ -1,18 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sorties BetweenStudents{% endblock %}
+{% block title %}Sorties{% endblock %}
 
 {% block body %}
-    <h1>Les sorties</h1>
-
-    <div class="row">
-        {{ form_start(searchSortieFormType) }}
-        {{ form_widget(searchSortieFormType) }}
-        <button class="ui primary button" type="submit">Rechercher</button>
-        {{ form_end(searchSortieFormType) }}
+    <div class="ui grid container pad">
+        <div class="row">
+            <div class="sixteen wide mobile fourteen wide tablet twelve wide computer centered column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Rechercher une sortie</h3>
+                    {{ form_start(searchSortieFormType) }}
+                    <div class="two fields">
+                        {{ form_row(searchSortieFormType.keyword) }}
+                        {{ form_row(searchSortieFormType.campus) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(searchSortieFormType.dateMin) }}
+                        {{ form_row(searchSortieFormType.dateMax) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(searchSortieFormType.save) }}
+                    </div>
+                    {{ form_end(searchSortieFormType) }}
+                </div>
+            </div>
+        </div>
+        {% include("inc/card-sortie.html.twig") %}
     </div>
+{% endblock %}
 
-    <br>
-
-    {% include("inc/card_sortie.html.twig") %}
+{% block javascripts %}
 {% endblock %}

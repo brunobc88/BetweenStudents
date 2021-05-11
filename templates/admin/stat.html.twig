@@ -1,0 +1,130 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block body %}
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
+                <h2>Statistiques</h2>
+            </div>
+        </div>
+    </div>
+    <div class="ui grid stackable padded">
+{#        <div class="eight wide computer sixteen wide tablet sixteen wide mobile column">#}
+{#            <div class="ui fluid card">#}
+{#                <canvas id="myChart1"></canvas>#}
+{#            </div>#}
+{#        </div>#}
+        <div class="eight wide computer sixteen wide tablet sixteen wide mobile column">
+            <div class="ui fluid card">
+                <canvas id="myChart2"></canvas>
+            </div>
+        </div>
+        <div class="eight wide computer sixteen wide tablet sixteen wide mobile column">
+            <div class="ui fluid card">
+                <canvas id="myChart3"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const data2 = {
+            labels: [
+                {% for mois in tableauDerniersMois %}
+                '{{ mois }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Nombre de sortie',
+                backgroundColor: 'rgb(214, 28, 13)',
+                borderColor: 'rgb(214, 28, 13)',
+                data: [
+                    {% for stat in statsSortie %}
+                    '{{ stat }}',
+                    {% endfor %}
+                ],
+            }]
+        };
+
+        const data3 = {
+            labels: [
+                {% for campus in tableauCampus %}
+                '{{ campus.nom }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: '',
+                data: [
+                    {% for stat in statsUsers %}
+                    '{{ stat }}',
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    {% for stat in statsUsers %}
+                    'rgb({{ random(0, 255) }}  , {{ random(0, 255) }}, {{ random(0, 255) }})',
+                    {% endfor %}
+                ]
+            }]
+        };
+
+        const config2 = {
+            type: 'bar',
+            data: data2,
+            legend:{
+                display:false
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                // tooltips: {
+                //     callbacks: {
+                //         label: function(tooltipItem) {
+                //             return tooltipItem.yLabel;
+                //         }
+                //     }
+                // },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Nombre de sortie (6 derniers mois)'
+                    }
+                }
+            },
+        };
+
+        const config3 = {
+            type: 'polarArea',
+            data: data3,
+            options: {
+                legend: {
+                    display: false
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Nombre d\'utilisateurs par campus'
+                    }
+                }
+            }
+        };
+
+        let myChart2 = new Chart(
+            document.getElementById('myChart2'),
+            config2
+        );
+        let myChart3 = new Chart(
+            document.getElementById('myChart3'),
+            config3
+        );
+    </script>
+{% endblock %}

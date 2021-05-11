@@ -4,27 +4,40 @@
     <meta charset="UTF-8">
     <title>{% block title %}BetweenStudents{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/semantic_add_on.css') }}">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
     {% block stylesheets %}{% endblock %}
-
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 </head>
-<body>
-<header>
-    {% include("inc/navbar.html.twig") %}
-    {% include("inc/messageFlash.html.twig") %}
-</header>
 
-<div class="ui container">
+<body>
+{% include("inc/navbar.html.twig") %}
+{% include("inc/message-flash.html.twig") %}
+
+<div class="pusher">
     {% block body %}{% endblock %}
 </div>
 
+{% include("inc/footer.html.twig") %}
+
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 <script>
-    setTimeout(function(){
-        $('.message.auto-close').closest('.message').transition('fade');
-    }, 5000 );
+    $(document).ready(function() {
+        $('.ui.dropdown').dropdown();
+
+        $('.ui.sidebar')
+            .sidebar('attach events', '.toc.item')
+        ;
+
+        $('.ui.checkbox')
+            .checkbox()
+        ;
+
+        setTimeout(function(){
+            $('.message.auto-close').closest('.message').transition('fade');
+        }, 5000 );
+    });
 
     function removeMessage() {
         $('.message.manuel-close').remove();

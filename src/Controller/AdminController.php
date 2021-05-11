@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\SearchCampusFormType;
 use App\Form\SearchSortieFormType;
 use App\Form\SearchUserFormType;
 use App\Form\SearchVilleFormType;
@@ -11,6 +12,7 @@ use App\Repository\SortieRepository;
 use App\Repository\UserRepository;
 use App\Repository\VilleRepository;
 use App\Security\EmailVerifier;
+use App\Services\SearchCampus;
 use App\Services\SearchSortie;
 use App\Services\SearchUser;
 use App\Services\SearchVille;
@@ -39,11 +41,13 @@ class AdminController extends AbstractController
         $nbreResultatsSortie = $sortieRepository->countResultSearchSortie(new SearchSortie(), true);
         $nbreResultatsUser = $userRepository->countResultSearchUser(new SearchUser());
         $nbreResultatsVille = $villeRepository->countResultSearchVille(new SearchVille());
+        $nbreResultatsCampus = $campusRepository->countResultSearchCampus(new SearchCampus());
 
         return $this->render('admin/index.html.twig', [
             'nbreResultatsSortie' => $nbreResultatsSortie,
             'nbreResultatsUser' => $nbreResultatsUser,
             'nbreResultatsVille' => $nbreResultatsVille,
+            'nbreResultatsCampus' => $nbreResultatsCampus,
         ]);
     }
 
@@ -133,7 +137,7 @@ class AdminController extends AbstractController
             $this->addFlash('success', 'Modification enregistrée');
 
             return new JsonResponse([
-                'content' => $this->renderView('inc/messageFlash.html.twig')
+                'content' => $this->renderView('inc/message-flash.html.twig')
             ]);
         }
 
@@ -170,12 +174,50 @@ class AdminController extends AbstractController
      */
     public function campus(Request $request, CampusRepository $campusRepository): Response
     {
-        $tableauCampus = $campusRepository->findAll();
-        $nbreResultats = count($tableauCampus);
+        $searchCampus = new SearchCampus();
+        $searchCampus->page = $request->get('page', 1);
+
+        $searchCampusFormType = $this->createForm(SearchCampusFormType::class, $searchCampus);
+        $searchCampusFormType->handleRequest($request);
+
+        $tableauCampus = $campusRepository->findSearchCampusPaginate($searchCampus, 24);
+        $nbreResultats = $campusRepository->countResultSearchCampus($searchCampus);
 
         return $this->render('admin/campus.html.twig', [
+            'searchCampusFormType' => $searchCampusFormType->createView(),
             'tableauCampus' => $tableauCampus,
             'nbreResultats' => $nbreResultats,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/stat", name="app_admin_stat")
+     */
+    public function stat(SortieRepository $sortieRepository, UserRepository $userRepository, CampusRepository $campusRepository): Response
+    {
+        $tableauDerniersMois = [];
+        $date = new DateTime();
+        $date->modify('-6 month');
+        for ($i = 0; $i < 6; $i++) {
+            $tableauDerniersMois[] = $date->modify('+1 month')->format('M');
+        }
+
+        $statsSortie = $sortieRepository->statsSortie();
+
+        $statsUsers = [];
+        $searchUser = new SearchUser();
+        $tableauCampus = $campusRepository->findAll();
+        for ($i = 0; $i < count($tableauCampus); $i++) {
+            $searchUser->campus = $tableauCampus[$i];
+            $statsUsers[] = $userRepository->countResultSearchUser($searchUser);
+        }
+        dump($statsUsers);
+
+        return $this->render('admin/stat.html.twig', [
+            'statsSortie' => $statsSortie,
+            'statsUsers' => $statsUsers,
+            'tableauCampus' => $tableauCampus,
+            'tableauDerniersMois' => $tableauDerniersMois,
         ]);
     }
 }

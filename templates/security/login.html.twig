@@ -1,47 +1,52 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Se connecter{% endblock %}
+{% block title %}S'identifier{% endblock %}
 
 {% block body %}
     {% if error %}
-        <div class="row">
-            <div class="ui error message manuel-close">
-                <i class="close icon" onclick="removeMessage()"></i>
-                <div class="header">
-                    Error
-                </div>
-                <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+        <div class="ui message-fixed compact error message manuel-close">
+            <i class="close icon" onclick="removeMessage()"></i>
+            <div class="header">
+                Error
             </div>
+            <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
         </div>
     {% endif %}
-    <div class="row">
-        <form class="ui form" method="post">
-            <div class="field">
-                <label for="inputEmailOrPseudo">Email/Pseudo</label>
-                <input type="text" name="emailOrPseudo" id="inputEmailOrPseudo" value="{{ last_username }}" required autofocus>
-            </div>
-            <div class="field">
-                <label for="inputPassword">Mot de passe</label>
-                <input type="password" name="password" id="inputPassword" required>
-            </div>
-            <div class="field">
-                <div class="ui checkbox">
-                    <input type="checkbox" name="_remember_me">
-                    <label>Se souvenir de moi</label>
+
+    <div class="ui grid container pad">
+        <div class="row">
+            <div class="sixteen wide mobile ten wide tablet six wide computer centered column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">S'identifier</h3>
+                    <form class="ui form" method="post">
+                        <div class="field">
+                            <label for="inputEmailOrPseudo">Email/Pseudo</label>
+                            <input type="text" name="emailOrPseudo" id="inputEmailOrPseudo" value="{{ last_username }}" required autofocus>
+                        </div>
+                        <div class="field">
+                            <label for="inputPassword">Mot de passe</label>
+                            <input type="password" name="password" id="inputPassword" required>
+                        </div>
+                        <div class="field">
+                            <div class="ui checkbox">
+                                <input type="checkbox" name="_remember_me">
+                                <label>Se souvenir de moi</label>
+                            </div>
+                        </div>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        <button class="ui button" type="submit">S'identifier</button>
+                        {#                        <br><br>#}
+                    </form>
+                    <div class="ui right aligned grid">
+                        <div class="column">
+                            <a href="{{ path('app_reset_password', {'token': 'x'}) }}">Mot de passe oublié</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-            <button class="ui button" type="submit">Connexion</button>
-            <br>
-            <a href="{{ path('app_reset_password', {'token': 'x'}) }}">Mot de passe oublié</a>
-            <br>
-            <a href="{{ path('app_register') }}">Inscription</a>
-        </form>
+        </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
-    <script>
-        $('.ui.checkbox').checkbox();
-    </script>
 {% endblock %}

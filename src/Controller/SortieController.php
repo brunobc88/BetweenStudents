@@ -47,7 +47,7 @@ class SortieController extends AbstractController
         $searchSortieFormType = $this->createForm(SearchSortieFormType::class, $searchSortie);
         $searchSortieFormType->handleRequest($request);
 
-        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie, 12);
+        $tableauSorties = $sortieRepository->findSearchSortiePaginate($searchSortie, 16);
         $nbreResultats = $sortieRepository->countResultSearchSortie($searchSortie);
 
         return $this->render('sortie/index.html.twig', [

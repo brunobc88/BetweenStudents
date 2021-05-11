@@ -1,19 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sorties BetweenStudents{% endblock %}
+{% block title %}Mes sorties{% endblock %}
 
 {% block body %}
-    <h1>Mes sorties</h1>
-
-    <div class="row">
-        {{ form_start(searchSortieFormType) }}
-        {{ form_widget(searchSortieFormType) }}
-        {{ form_end(searchSortieFormType) }}
+    <div class="ui grid container pad">
+        <div class="row">
+            <div class="sixteen wide mobile fourteen wide tablet twelve wide computer centered column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Mes sorties</h3>
+                    {{ form_start(searchSortieUserFormType) }}
+                    {{ form_row(searchSortieUserFormType.checkbox) }}
+                    {{ form_end(searchSortieUserFormType) }}
+                </div>
+            </div>
+        </div>
+        {% include("inc/card-sortie.html.twig") %}
     </div>
-
-    <br>
-
-    {% include("inc/card_sortie.html.twig") %}
 {% endblock %}
 
 {% block javascripts %}

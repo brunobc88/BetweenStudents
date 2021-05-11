@@ -125,4 +125,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $query;
     }
+
+//    public function statsUsers(): array
+//    {
+//        $result = [];
+//        for ($i = 0; $i < 6; $i++) {
+//            $result[] = $this
+//                ->createQueryBuilder('u')
+//                ->select('COUNT(DISTINCT u)')
+//                ->andWhere('MONTH(s.dateDebut) = :mois AND YEAR(s.dateDebut) = :annee AND s.etat BETWEEN 2 AND 5')
+//                ->setParameter('mois', $date->format('m'))
+//                ->setParameter('annee', $date->format('Y'))
+//                ->getQuery()
+//                ->getSingleScalarResult();
+//        }
+//
+//        return $result;
+//    }
 }

@@ -3,17 +3,20 @@
 {% block title %}Admin Utilisateur{% endblock %}
 
 {% block body %}
-    <div class="row">
-        {{ form_start(searchUserFormType) }}
-        {{ form_widget(searchUserFormType) }}
-        <button class="ui primary button" type="submit">Rechercher</button>
-        {{ form_end(searchUserFormType) }}
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
+                <h2>Liste des utilisateurs</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            </div>
+        </div>
+        <div class="four wide column">
+            {{ form_start(searchUserFormType) }}
+            {{ form_widget(searchUserFormType) }}
+            {{ form_end(searchUserFormType) }}
+        </div>
     </div>
     <div class="ui grid stackable padded">
         <div class="column">
-            <div class="row">
-                <h2 id="testXX">Liste des utilisateurs</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
-            </div>
             <table class="ui celled striped table">
                 <thead>
                 <tr>
@@ -126,7 +129,11 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <div class="row">
+        </div>
+    </div>
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
                 {{ knp_pagination_render(tableauUsers) }}
             </div>
         </div>

@@ -3,11 +3,20 @@
 {% block title %}Admin Campus{% endblock %}
 
 {% block body %}
-    <div class="ui grid stackable padded">
-        <div class="column">
-            <div class="row">
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
                 <h2>Liste des campus</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
             </div>
+        </div>
+        <div class="four wide column">
+            {{ form_start(searchCampusFormType) }}
+            {{ form_widget(searchCampusFormType) }}
+            {{ form_end(searchCampusFormType) }}
+        </div>
+    </div>
+    <div class="ui grid stackable padded">
+        <div class="column">
             <table class="ui celled striped table">
                 <thead>
                 <tr>
@@ -33,6 +42,13 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
+                {{ knp_pagination_render(tableauCampus) }}
+            </div>
         </div>
     </div>
 {% endblock %}

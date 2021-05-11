@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -148,6 +149,9 @@ class SortieFormType extends AbstractType
                 'label' => 'Publiée',
                 'required' => false,
                 'mapped' => false,
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Enregistrer',
             ])
         ;
 

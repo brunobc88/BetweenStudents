@@ -3,17 +3,20 @@
 {% block title %}Admin Sortie{% endblock %}
 
 {% block body %}
-    <div class="row">
-        {{ form_start(searchSortieFormType) }}
-        {{ form_widget(searchSortieFormType) }}
-        <button class="ui primary button" type="submit">Rechercher</button>
-        {{ form_end(searchSortieFormType) }}
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
+                <h2>Liste des sorties</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
+            </div>
+        </div>
+        <div class="four wide column">
+            {{ form_start(searchSortieFormType) }}
+            {{ form_widget(searchSortieFormType) }}
+            {{ form_end(searchSortieFormType) }}
+        </div>
     </div>
     <div class="ui grid stackable padded">
         <div class="column">
-            <div class="row">
-                <h2>Liste des sorties</h2>({{ nbreResultats ? nbreResultats : 0 }} résultats)
-            </div>
             <table class="ui celled striped table">
                 <thead>
                 <tr>
@@ -73,7 +76,11 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <div class="row">
+        </div>
+    </div>
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
                 {{ knp_pagination_render(tableauSorties) }}
             </div>
         </div>
@@ -84,7 +91,7 @@
     <script>
         function modalSupprimerSortie(id){
             $('.basic.test.modal.modalAnnulerSortie'+id)
-                .modal('setting', 'closable', false)
+                .modal('setting', 'closable', true)
                 .modal('show')
             ;
         }

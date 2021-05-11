@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Services\SearchVille;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,6 +20,9 @@ class SearchVilleFormType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Rechercher par mots-clés'
                 ]
+            ])
+            ->add('save', SubmitType::class, [
+                'label' => 'Rechercher',
             ])
         ;
     }

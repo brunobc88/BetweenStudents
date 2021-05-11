@@ -3,6 +3,13 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block body %}
+    <div class="ui grid padded">
+        <div class="row">
+            <div class="four wide column">
+                <h2>Dashboard</h2>
+            </div>
+        </div>
+    </div>
     <div class="ui grid stackable padded">
         <div class="four wide computer eight wide tablet sixteen wide mobile column">
             <div class="ui fluid card">
@@ -80,7 +87,7 @@
                         <i class="icon industry"></i>
                     </div>
                     <div class="header">
-                        <div class="ui purple header">9805</div>
+                        <div class="ui purple header">{{ nbreResultatsCampus }}</div>
                     </div>
                     <div class="meta">
                         Campus
@@ -103,37 +110,22 @@
                 <thead>
                 <tr>
                     <th colspan="3">
-                        Git Repository
+                        Tâches
                     </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td class="collapsing">
-                        <i class="folder icon"></i> node_modules
+                        <i class="folder icon"></i>admin
                     </td>
-                    <td>Initial commit</td>
-                    <td class="right aligned collapsing">10 hours ago</td>
+                    <td>Ajouter une propriété verifiedByAdmin</td>
+                    <td class="right aligned collapsing">il y a 3 jours</td>
                 </tr>
                 <tr>
-                    <td><i class="folder icon"></i> test</td>
-                    <td>Initial commit</td>
-                    <td class="right aligned">10 hours ago</td>
-                </tr>
-                <tr>
-                    <td><i class="folder icon"></i> build</td>
-                    <td>Initial commit</td>
-                    <td class="right aligned">10 hours ago</td>
-                </tr>
-                <tr>
-                    <td><i class="file outline icon"></i> package.json</td>
-                    <td>Initial commit</td>
-                    <td class="right aligned">10 hours ago</td>
-                </tr>
-                <tr>
-                    <td><i class="file outline icon"></i> Gruntfile.js</td>
-                    <td>Initial commit</td>
-                    <td class="right aligned">10 hours ago</td>
+                    <td><i class="folder icon"></i>roger</td>
+                    <td>ajouter un TODO list sur Dashboard</td>
+                    <td class="right aligned">il y a 10h</td>
                 </tr>
                 </tbody>
             </table>

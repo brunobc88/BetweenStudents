@@ -1,18 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modication profil{% endblock %}
+{% block title %}Modifier le profil{% endblock %}
 
 {% block body %}
+    <div class="ui grid container pad">
+        <div class="row">
+            <div class="sixteen wide mobile twelve wide tablet eight wide computer centered column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Modifier le profil</h3>
+                    {{ form_start(userForm) }}
+                    <div class="field">
+                        {{ form_row(userForm.email) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(userForm.pseudo) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(userForm.nom) }}
+                        {{ form_row(userForm.prenom) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(userForm.telephone) }}
+                        {{ form_row(userForm.campus) }}
+                    </div>
+                    <div class="field">
+                        <div class="fields">
+                            <div class="six wide field">
+                                <div class="ui small image">
+                                    {% if user.urlImage %}
+                                        {% if 'http' in user.urlImage %}
+                                            <img src="{{ user.urlImage }}" alt="avatar profil">
+                                        {% else %}
+                                            <img src="{{ asset('images/users/') ~ user.urlImage }}" alt="avatar profil">
+                                        {% endif %}
+                                    {% else %}
+                                        <img src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar profil">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="ten wide field">
+                                {{ form_row(userForm.image) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        {{ form_row(userForm.save) }}
+                    </div>
+                    {{ form_end(userForm) }}
+                    <div class="ui right aligned grid">
+                        <div class="column">
+                            <a class="ui negative basic button">Supprimer le compte</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-    <h1>Modifier le profil</h1>
-    {{ form_start(userForm) }}
-    {{ form_widget(userForm) }}
-    <button class="ui primary button" type="submit">Enregistrer</button>
-    {{ form_end(userForm) }}
-
-
-    <br><br>
-
-    <a class="ui primary button">Supprimer le compte</a>
-
+{% block javascripts %}
 {% endblock %}

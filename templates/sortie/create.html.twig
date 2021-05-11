@@ -3,12 +3,44 @@
 {% block title %}Proposer votre sortie{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <h1>Créer une sortie</h1>
-        {{ form_start(sortieForm) }}
-        {{ form_widget(sortieForm) }}
-        <button class="ui primary button" type="submit">Enregistrer</button>
-        {{ form_end(sortieForm) }}
+    <div class="ui grid container pad">
+        <div class="row">
+            <div class="sixteen wide mobile fourteen wide tablet twelve wide computer centered column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Créer une sortie</h3>
+                    {{ form_start(sortieForm) }}
+                    <div class="field">
+                        {{ form_row(sortieForm.nom) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(sortieForm.description) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(sortieForm.image) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(sortieForm.dateDebut) }}
+                        {{ form_row(sortieForm.dateClotureInscription) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(sortieForm.duree) }}
+                        {{ form_row(sortieForm.nbreInscriptionMax) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(sortieForm.rue) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(sortieForm.codePostal) }}
+                        {{ form_row(sortieForm.ville) }}
+                    </div>
+                    <div class="two fields">
+                        {{ form_row(sortieForm.etat) }}
+                        {{ form_row(sortieForm.save) }}
+                    </div>
+                    {{ form_end(sortieForm) }}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 

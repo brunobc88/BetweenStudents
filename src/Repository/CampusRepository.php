@@ -3,8 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Campus;
+use App\Services\SearchCampus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @method Campus|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,37 +18,51 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CampusRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $paginator;
+
+    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
     {
         parent::__construct($registry, Campus::class);
+        $this->paginator = $paginator;
     }
 
-    // /**
-    //  * @return Campus[] Returns an array of Campus objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function findSearchCampusPaginate(SearchCampus $searchCampus, int $nbreResultat): PaginationInterface
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->getSearchQueryCampus($searchCampus, false)->getQuery();
+        return $this->paginator->paginate($query, $searchCampus->page, $nbreResultat);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Campus
+    public function countResultSearchCampus(SearchCampus $searchCampus): int
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->getSearchQueryCampus($searchCampus, true)->getQuery()->getSingleScalarResult();
     }
-    */
+
+    private function getSearchQueryCampus(SearchCampus $searchCampus, bool $count): QueryBuilder
+    {
+        $query = $this
+            ->createQueryBuilder('c')
+            ->leftJoin('c.ville', 'v');
+
+        if ($count) {
+            $query = $query
+                ->select('COUNT(DISTINCT c)');
+        }
+        else {
+            $query = $query
+                ->select('c', 'v');
+        }
+
+        if (!empty($searchCampus->keyword)) {
+            $query = $query
+                ->where($query->expr()->orX(
+                    $query->expr()->like('c.id', ':keyword'),
+                    $query->expr()->like('c.nom', ':keyword'),
+                    $query->expr()->like('v.nom', ':keyword'),
+                    $query->expr()->like('v.codePostal', ':keyword')
+                ))
+                ->setParameter('keyword', "%$searchCampus->keyword%");
+        }
+
+        return $query;
+    }
 }

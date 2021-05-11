@@ -150,4 +150,24 @@ class SortieRepository extends ServiceEntityRepository
 
         return $query;
     }
+
+    public function statsSortie(): array
+    {
+        $result = [];
+        $date = new DateTime();
+        $date->modify('-6 month');
+        for ($i = 0; $i < 6; $i++) {
+            $date->modify('+1 month');
+            $result[] = $this
+                ->createQueryBuilder('s')
+                ->select('COUNT(DISTINCT s)')
+                ->andWhere('MONTH(s.dateDebut) = :mois AND YEAR(s.dateDebut) = :annee AND s.etat BETWEEN 2 AND 5')
+                ->setParameter('mois', $date->format('m'))
+                ->setParameter('annee', $date->format('Y'))
+                ->getQuery()
+                ->getSingleScalarResult();
+        }
+
+        return $result;
+    }
 }
