@@ -61,7 +61,20 @@ App\Entity\User:
     urlImage: 'https://robohash.org/<numberBetween(0, 999)>.png?set=set<numberBetween(1, 4)>'
     campus: '@campus_*'
     isVerified: '1'
-  user_{2..200}:
+  user_2:
+    email: 'admin@noams88.fr'
+    roles: [ 'ROLE_USER' ]
+    password: '<shuffle($)>argon2id<shuffle($)>v=19<shuffle($)>m=65536,t=4,p=1<shuffle($)>UmNWZ2g3WlYzalY5SnJLdw<shuffle($)>LGI3TbsTkH7bWtFbBoOoIdXMA87Z3OFuM2fw+5o86Tc'
+    nom: '<lastName()>'
+    prenom: '<firstName()>'
+    telephone: '<e164PhoneNumber()>'
+    pseudo: 'user'
+    administrateur: '0'
+    actif: '1'
+    urlImage: 'https://robohash.org/<numberBetween(0, 999)>.png?set=set<numberBetween(1, 4)>'
+    campus: '@campus_*'
+    isVerified: '1'
+  user_{3..200}:
     email: '<email()>'
     roles: ['ROLE_USER']
     password: '<shuffle($)>argon2id<shuffle($)>v=19<shuffle($)>m=65536,t=4,p=1<shuffle($)>UmNWZ2g3WlYzalY5SnJLdw<shuffle($)>LGI3TbsTkH7bWtFbBoOoIdXMA87Z3OFuM2fw+5o86Tc'

@@ -12,6 +12,24 @@
             <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
         </div>
     {% endif %}
+    <div class="ui message-fixed compact message manuel-close">
+        <i class="close icon" onclick="removeMessage()"></i>
+        <div class="header">
+            Bienvenue honorable visiteur,
+        </div>
+        <div class="ui divider"></div>
+        <h5>Tu trouveras ci-dessous des identifiants <br>qui te permettront de découvrir le site</h5>
+        <p>En tant qu'administrateur</p>
+        <ul class="list">
+            <li>Login : admin</li>
+            <li>Mot de passe : password</li>
+        </ul>
+        <p>En tant qu'utilisateur</p>
+        <ul class="list">
+            <li>Login : user</li>
+            <li>Mot de passe : password</li>
+        </ul>
+    </div>
 
     <div class="ui grid container pad">
         <div class="row">
