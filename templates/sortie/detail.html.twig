@@ -25,7 +25,7 @@
                 <div class="row">
                     <div class="column">
 
-                        <h2>{{ sortie.nom }}</h2>
+                        <h2 style="padding-top: 15px">{{ sortie.nom }}</h2>
                         <h5 class="ui horizontal divider header">
                             <i class="tag icon"></i>
                             Description
@@ -72,33 +72,29 @@
                         </h5>
                         <p>{{ sortie.rue }}, {{ sortie.ville.codePostal }} {{ sortie.ville.nom }}</p>
 
-                        <div class="ui longer modal">
+                        <div class="ui small modal groupP">
                             <div class="header">Liste des participants</div>
                             <div class="scrolling content">
                                 <div class="ui grid doubling three column row">
-                                    <div class="row">
-                                        {% for participant in sortie.participants %}
-                                            <div class="column padding">
-                                                <a onclick="modalAfficherUser({{ participant.id }})" style="cursor: pointer;">
-                                                    {% if participant.urlImage %}
-                                                        {% if 'http' in participant.urlImage %}
-                                                            <img class="ui avatar image" src="{{ participant.urlImage }}" alt="avatar participant">
-                                                        {% else %}
-                                                            <img class="ui avatar image" src="{{ asset('images/users/') ~ participant.urlImage }}" alt="avatar participant">
-                                                        {% endif %}
-                                                    {% else %}
-                                                        <img class="ui avatar image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar participant">
-                                                    {% endif %}
-                                                    {{ participant.pseudo }}</a>
-                                            </div>
-                                            <!-- modal -->
-                                            <div class="ui dimmer modals page transition hidden">
-                                                {% set elementUser = participant %}
-                                                {% include("inc/modal-user.html.twig") %}
-                                            </div>
-                                            <!-- modal -->
-                                        {% endfor %}
-                                    </div>
+                                    {% for participant in sortie.participants %}
+                                        <a onclick="modalAfficherUser({{ participant.id }})" class="ui image label" style="cursor: pointer; margin: 10px">
+                                            {% if participant.urlImage %}
+                                                {% if 'http' in participant.urlImage %}
+                                                    <img class="ui avatar image" src="{{ participant.urlImage }}" alt="avatar participant">
+                                                {% else %}
+                                                    <img class="ui avatar image" src="{{ asset('images/users/') ~ participant.urlImage }}" alt="avatar participant">
+                                                {% endif %}
+                                            {% else %}
+                                                <img class="ui avatar image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar participant">
+                                            {% endif %}
+                                            {{ participant.pseudo }}</a>
+                                        <!-- modal -->
+                                        <div class="ui dimmer modals page transition hidden">
+                                            {% set elementUser = participant %}
+                                            {% include("inc/modal-user.html.twig") %}
+                                        </div>
+                                        <!-- modal -->
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -122,7 +118,7 @@
                                         <img class="ui small circular image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar organisateur">
                                     {% endif %}
                                 </div>
-                                <a onclick="modalAfficherUser({{ sortie.organisateur.id }})">{{ sortie.organisateur.pseudo }}</a>
+                                <a onclick="modalAfficherUser({{ sortie.organisateur.id }})" style="color: #1b1c1d">&nbsp; {{ sortie.organisateur.pseudo }}</a>
                             </div>
                             <div class="ui divider"></div>
                             <div class="description">
@@ -193,7 +189,7 @@
 
 {% block javascripts %}
     <script>
-        $('.ui.longer.modal').modal('attach events', '.button-modal', 'show');
+        $('.ui.small.modal.groupP').modal('attach events', '.button-modal', 'show');
 
         function modalAfficherUser(id) {
             $('.ui.modal.modalAfficherUser'+id)

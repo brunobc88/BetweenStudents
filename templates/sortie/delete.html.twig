@@ -3,11 +3,24 @@
 {% block title %}Supprimer votre sortie{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <h1>Supprimer votre sortie : {{ sortie.nom }}</h1>
-        {{ form_start(sortieDeleteForm) }}
-        {{ form_widget(sortieDeleteForm) }}
-        <button class="ui primary button" type="submit">Supprimer</button>
-        {{ form_end(sortieDeleteForm) }}
+    <div class="ui grid container pad">
+        <div class="row">
+            <div class="sixteen wide mobile fourteen wide tablet twelve wide computer centered column">
+                <div class="ui segment">
+                    <h3 class="ui dividing header">Supprimer votre sortie</h3>
+                    {{ form_start(sortieDeleteForm) }}
+                    <div class="field">
+                        {{ form_row(sortieDeleteForm.raisonAnnulation) }}
+                    </div>
+                    <div class="field">
+                        {{ form_row(sortieDeleteForm.save) }}
+                    </div>
+                    {{ form_end(sortieDeleteForm) }}
+                </div>
+            </div>
+        </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
 {% endblock %}

@@ -17,7 +17,7 @@ class SortieDeleteFormType extends AbstractType
     {
         $builder
             ->add('raisonAnnulation', TextareaType::class, [
-                'label' => 'Raison de l\'annulation',
+                'label' => 'Merci d\'indiquer la raison de l\'annulation pour les participants',
                 'required' => false,
                 'constraints' => [
                     new NotBlank([

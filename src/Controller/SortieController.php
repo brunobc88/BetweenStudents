@@ -240,6 +240,17 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('app_sortie_detail', ["id" => $sortie->getId()]);
         }
 
+        if ($sortie->getEtat()->getId() === 1 || count($sortie->getParticipants()) === 0) {
+            $etat = $etatRepository->find(6); // état = annulée
+            $sortie->setEtat($etat);
+            $sortie->setDateAnnulation(new DateTime());
+
+            $entityManager->flush();
+
+            $this->addFlash('success', 'La sortie a bien été supprimée');
+            return $this->redirectToRoute('app_user_sortie');
+        }
+
         if ($sortieDeleteForm->isSubmitted() && $sortieDeleteForm->isValid()) {
             $etat = $etatRepository->find(6); // état = annulée
             $sortie->setEtat($etat);
@@ -255,7 +266,7 @@ class SortieController extends AbstractController
             }
 
             $this->addFlash('success', 'La sortie a bien été supprimée');
-            return $this->redirectToRoute('app_sortie');
+            return $this->redirectToRoute('app_user_sortie');
         }
 
         return $this->render('sortie/delete.html.twig', [
