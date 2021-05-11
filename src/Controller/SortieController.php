@@ -244,6 +244,7 @@ class SortieController extends AbstractController
             $etat = $etatRepository->find(6); // état = annulée
             $sortie->setEtat($etat);
             $sortie->setDateAnnulation(new DateTime());
+            $sortie->setRaisonAnnulation('Sortie non débutée ou avec aucun participant');
 
             $entityManager->flush();
 

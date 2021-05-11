@@ -72,6 +72,15 @@
                         </h5>
                         <p>{{ sortie.rue }}, {{ sortie.ville.codePostal }} {{ sortie.ville.nom }}</p>
 
+                        {% if sortie.etat.id == 6 %}
+                            <h5 class="ui horizontal divider header">
+                                <i class="tag icon"></i>
+                                Annulation
+                            </h5>
+                            <p>Date : {{ sortie.dateAnnulation | date('d/m/Y à H:i') }}</p>
+                            <p>Raison : {{ sortie.raisonAnnulation }}</p>
+                        {% endif %}
+
                         <div class="ui small modal groupP">
                             <div class="header">Liste des participants</div>
                             <div class="scrolling content">
@@ -88,16 +97,17 @@
                                                 <img class="ui avatar image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar participant">
                                             {% endif %}
                                             {{ participant.pseudo }}</a>
-                                        <!-- modal -->
-                                        <div class="ui dimmer modals page transition hidden">
-                                            {% set elementUser = participant %}
-                                            {% include("inc/modal-user.html.twig") %}
-                                        </div>
-                                        <!-- modal -->
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
+                        <!-- modal -->
+                        <div class="ui dimmer modals page transition hidden">
+                            {% set label_modal_suppression = 'la sortie' %}
+                            {% set elementSuppression = sortie %}
+                            {% include("inc/modal-suppression.html.twig") %}
+                        </div>
+                        <!-- modal -->
                     </div>
                 </div>
             </div>
@@ -129,7 +139,24 @@
                             <div class="ui two buttons">
                                 <a class="ui teal button" href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
                                 <div class="or"></div>
-                                <a class="ui button" href="{{ path('app_sortie_delete', {'id': sortie.id}) }}">Supprimer</a>
+                                <a class="ui button" id="button-suppression-sortie">Supprimer</a>
+                            </div>
+                            <div class="ui mini modal transition hidden">
+                                <div class="header">
+                                    Suppression de la sortie
+                                </div>
+                                <div class="content">
+                                    <p>Êtes-vous sûr de vouloir supprimer la sortie ?</p>
+                                </div>
+                                <div class="actions">
+                                    <div class="ui negative button">
+                                        No
+                                    </div>
+                                    <a class="ui positive right labeled icon button" href="{{ path('app_sortie_delete', {'id': sortie.id}) }}">
+                                        Yes
+                                        <i class="checkmark icon"></i>
+                                    </a>
+                                </div>
                             </div>
                             <br>
                         {% endif %}
@@ -190,6 +217,10 @@
 {% block javascripts %}
     <script>
         $('.ui.small.modal.groupP').modal('attach events', '.button-modal', 'show');
+
+        $('.mini.modal')
+            .modal('attach events', '#button-suppression-sortie', 'show')
+        ;
 
         function modalAfficherUser(id) {
             $('.ui.modal.modalAfficherUser'+id)
