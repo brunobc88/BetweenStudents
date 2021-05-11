@@ -66,12 +66,12 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
-                'label' => 'Conditions d\'utilisations',
+                'label' => 'J\'accepte les conditions générales d\'utilisation',
                 'required' => false,
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'Veuillez accepter les termes d\'utilisations'
+                        'message' => 'Veuillez accepter les conditions générales d\'utilisation'
                     ]),
                 ],
             ])
