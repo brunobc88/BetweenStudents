@@ -29,12 +29,12 @@
                                 <div class="ui small image">
                                     {% if user.urlImage %}
                                         {% if 'http' in user.urlImage %}
-                                            <img src="{{ user.urlImage }}" alt="avatar profil">
+                                            <img class="ui small circular image" src="{{ user.urlImage }}" alt="avatar profil">
                                         {% else %}
-                                            <img src="{{ asset('images/users/') ~ user.urlImage }}" alt="avatar profil">
+                                            <img class="ui small circular image" src="{{ asset('images/users/') ~ user.urlImage }}" alt="avatar profil">
                                         {% endif %}
                                     {% else %}
-                                        <img src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar profil">
+                                        <img class="ui small circular image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar profil">
                                     {% endif %}
                                 </div>
                             </div>
