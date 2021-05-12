@@ -5,6 +5,10 @@
 <p>Voici la raison</p>
 <p>{{ sortie.raisonAnnulation }}</p>
 <br>
-<p>Pas grave, organisez votre propre sortie en cliquant</p><a href="http://localhost/BetweenStudents/public/sortie/create">ICI</a>
+<p>
+    Pas grave, organisez votre propre sortie en cliquant sur le lien ci-dessous : <br><br>
+    <a href="{{ url('app_reset_password', {token: resetToken.token}) }}">Proposer une sortie</a>
+</p>
+
 
 <p>A tout de suite !</p>
