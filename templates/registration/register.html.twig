@@ -6,6 +6,15 @@
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
+    <div class="ui message-fixed compact message manuel-close" style="transform: translate(0, 60px);">
+        <i class="close icon" onclick="removeMessage()"></i>
+        <div class="header">
+            Bienvenue honorable visiteur,
+        </div>
+        <div class="ui divider"></div>
+        <h5>Si tu souhaite juste visiter ce site par curiosité <br>tu trouveras des identifiants de connexion dans l'espace "S'identifier" <br>accessible via le bouton en haut dans le menu</h5>
+        <p>Dans le cas où tu souhaite vraiment t'inscrire, fais toi plaisir</p>
+    </div>
 
     <div class="ui grid container pad">
         <div class="row">
