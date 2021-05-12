@@ -49,6 +49,7 @@ class RegistrationController extends AbstractController
 
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
 
+            $this->addFlash('success', 'Votre compte a bien été crée. Pour l\'activer, cliquez sur le lien présent dans l\'email que nous vous avons envoyé');
             return $this->redirectToRoute('app_login');
         }
 
