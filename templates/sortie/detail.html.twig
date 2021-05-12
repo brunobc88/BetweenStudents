@@ -97,6 +97,12 @@
                                                 <img class="ui avatar image" src="{{ asset('images/divers/no-image-user.png') }}" alt="avatar participant">
                                             {% endif %}
                                             {{ participant.pseudo }}</a>
+                                        <!-- modal -->
+                                        <div class="ui dimmer modals page transition hidden">
+                                            {% set elementUser = participant %}
+                                            {% include("inc/modal-user.html.twig") %}
+                                        </div>
+                                        <!-- modal -->
                                     {% endfor %}
                                 </div>
                             </div>
