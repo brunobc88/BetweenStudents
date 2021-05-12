@@ -237,7 +237,6 @@ class AdminController extends AbstractController
             $searchUser->campus = $tableauCampus[$i];
             $statsUsers[] = $userRepository->countResultSearchUser($searchUser);
         }
-        dump($statsUsers);
 
         return $this->render('admin/stat.html.twig', [
             'statsSortie' => $statsSortie,
