@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class UserController extends AbstractController
 {
@@ -52,7 +51,6 @@ class UserController extends AbstractController
                 $image->move($this->getParameter('image_user_directory'), $urlImage);
                 $user->setUrlImage($urlImage);
             }
-            // TODO gérer erreur losque pseudo ou email est null. Constraints NotNull ne marche pas
 
             $entityManager->flush();
             $this->addFlash('success', 'Le profil a été modifié');
