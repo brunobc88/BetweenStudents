@@ -77,6 +77,10 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Votre compte est bloqué. Contactez l\'administrateur.');
         }
+        elseif (!$user->isVerified()) {
+            // fail authentication with a custom error
+            throw new CustomUserMessageAuthenticationException('Votre compte est en attente de confirmation. Cliquez sur le lien présent dans l\'email que nous vous avons envoyé suite à votre inscription.');
+        }
 
         return $user;
     }
