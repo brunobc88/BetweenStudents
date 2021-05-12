@@ -37,7 +37,7 @@ class EmailVerifier
         $email = (new TemplatedEmail())
             ->from(new Address('no-reply@noams88.fr', 'BetweenStudents'))
             ->to($user->getEmail())
-            ->subject('Please Confirm your Email')
+            ->subject('Email de confirmation')
             ->htmlTemplate('registration/confirmation_email.html.twig');
 
         $context = $email->getContext();
