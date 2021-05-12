@@ -74,13 +74,12 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             throw new CustomUserMessageAuthenticationException('Identifiants invalides.');
         }
         elseif (!$user->getActif()) {
-            // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Votre compte est bloqué. Contactez l\'administrateur.');
         }
-        elseif (!$user->isVerified()) {
-            // fail authentication with a custom error
-            throw new CustomUserMessageAuthenticationException('Votre compte est en attente de confirmation. Cliquez sur le lien présent dans l\'email que nous vous avons envoyé suite à votre inscription.');
-        }
+        // La fonctionnalité de confirmation email a besoin que l'user puisse se connecter
+//        elseif (!$user->isVerified()) {
+//            throw new CustomUserMessageAuthenticationException('Votre compte est en attente de confirmation. Cliquez sur le lien présent dans l\'email que nous vous avons envoyé suite à votre inscription.');
+//        }
 
         return $user;
     }
