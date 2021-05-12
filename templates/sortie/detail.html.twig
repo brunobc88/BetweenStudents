@@ -59,7 +59,11 @@
                                 <div class="value">
                                     {% set heures = sortie.duree/60 %}
                                     {% set minutes = sortie.duree%60 %}
-                                    {{ heures | round(0, 'floor') }}<span style="font-size: 1rem">h</span>{{ minutes }}<span style="font-size: 1rem"> min</span>
+                                    {%  if heures == 0 %}
+                                        {{ minutes }}<span style="font-size: 1rem"> min</span>
+                                    {%  else %}
+                                        {{ heures | round(0, 'floor') }}<span style="font-size: 1rem">h</span>{{ minutes }}<span style="font-size: 1rem"> min</span>
+                                    {%  endif %}
                                 </div>
                                 <div class="label">
                                     Durée
