@@ -66,9 +66,11 @@ class ResetPasswordController extends AbstractController
             return $this->redirectToRoute('app_forgot_password_request');
         }
 
-        return $this->render('reset_password/check_email.html.twig', [
-            'resetToken' => $resetToken,
-        ]);
+//        return $this->render('reset_password/check_email.html.twig', [
+//            'resetToken' => $resetToken,
+//        ]);
+        $this->addFlash('success', 'Un e-mail vous a été envoyé contenant un lien sur lequel vous pouvez cliquer pour réinitialiser votre mot de passe');
+        return $this->redirectToRoute('app_login');
     }
 
     /**
