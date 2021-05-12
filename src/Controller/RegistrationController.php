@@ -49,7 +49,7 @@ class RegistrationController extends AbstractController
 
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user);
 
-            $this->addFlash('success', 'Pour activer votre compte, cliquez sur le lien présent dans l\'email que nous vous avons envoyé');
+            $this->addFlash('success', 'Nous vous avons envoyé un email de confirmation');
             return $this->redirectToRoute('app_login');
         }
 
@@ -70,7 +70,7 @@ class RegistrationController extends AbstractController
             $this->emailVerifier->handleEmailConfirmation($request, $this->getUser());
         } catch (VerifyEmailExceptionInterface $exception) {
 //            $this->addFlash('error', $exception->getReason());
-            $this->addFlash('error', 'Une erreur est survenue');
+            $this->addFlash('error', 'Pensez à confirmer votre email en cliquant sur le lien que nous vous avons envoyé');
 
             return $this->redirectToRoute('app_register');
         }
