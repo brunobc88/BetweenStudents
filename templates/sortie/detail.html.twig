@@ -142,7 +142,7 @@
                             </div>
                             <div class="ui divider"></div>
                             <div class="description">
-                                Cloture des inscriptions le {{ sortie.dateAnnulation | date('d/m/Y à H:i') }}
+                                Cloture des inscriptions le {{ sortie.dateClotureInscription | date('d/m/Y à H:i') }}
                             </div>
                         </div>
                         {% if (app.user == sortie.organisateur) %}
