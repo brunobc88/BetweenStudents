@@ -1,6 +1,3 @@
-
-
-
 <!-- Menu fixed -->
 <div class="ui large top fixed menu transition visible">
     <div class="ui container">
@@ -51,24 +48,24 @@
     <a class="item" href="{{ path('app_main') }}">Accueil</a>
     <a class="item" href="{{ path('app_sortie') }}">Sorties</a>
     <a class="item" href="{{ path('app_sortie_create') }}">Proposer une sortie</a>
+    {% if app.user %}
+        <a class="item" href="{{ path('app_user') }}">Mon profil</a>
+        <a class="item" href="{{ path('app_logout') }}">Déconnexion</a>
+    {% else %}
+        <a class="item" href="{{ path('app_login') }}">S'identifier</a>
+        <a class="item" href="{{ path('app_register') }}">S'inscrire</a>
+    {% endif %}
 </div>
 <!-- Menu sidebar -->
 
 <!-- Menu minified -->
-<div class="ui container">
+<div class="ui top fixed container menu-minified">
     <div class="ui large secondary inverted pointing menu">
         <a class="toc item">
-            <i class="sidebar icon"></i>
+            <i class="sidebar big icon"></i>
         </a>
         <div class="item">
             <img src="{{ asset('images/divers/logo_black.gif') }}" alt="logo">
-        </div>
-        <a class="item" href="{{ path('app_main') }}">Accueil</a>
-        <a class="item" href="{{ path('app_sortie') }}">Sorties</a>
-        <a class="item" href="{{ path('app_sortie_create') }}">Proposer une sortie</a>
-        <div class="right item">
-            <a class="ui inverted button" href="{{ path('app_login') }}">S'identifier</a>
-            <a class="ui inverted button" href="{{ path('app_register') }}">S'inscrire</a>
         </div>
     </div>
 </div>

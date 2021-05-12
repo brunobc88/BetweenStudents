@@ -1,3 +1,7 @@
+body.pushable {
+    background-color: #1b1c1d !important;
+}
+
 .hidden.menu {
     display: none;
 }
@@ -85,8 +89,12 @@
 
 @media only screen and (max-width: 700px) {
     .container.pad {
-        padding-top: 20px !important;
+        padding-top: 80px !important;
         padding-bottom: 30px !important;
+    }
+    .menu-minified {
+        left: -1em !important;
+        background-color: #1b1c1d !important;
     }
     .ui.fixed.menu {
         display: none !important;
