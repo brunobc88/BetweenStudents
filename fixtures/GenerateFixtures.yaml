@@ -106,7 +106,7 @@ App\Entity\Sortie:
 
 
 App\Entity\SortieImage:
-  image_{1..600}:
+  image_{1..1200}:
     urlImage: 'http://picsum.photos/id/<numberBetween(1,1000)>/400/400'
     sortie: '@sortie_*'
 
