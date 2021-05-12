@@ -12,7 +12,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 
 class UserController extends AbstractController
 {
@@ -32,7 +34,12 @@ class UserController extends AbstractController
         $user = $userRepository->find($this->getUser());
 
         $userForm = $this->createForm(UserEditFormType::class, $user);
-        $userForm = $userForm->handleRequest($request);
+        try {
+            $userForm = $userForm->handleRequest($request);
+        }
+        catch (InvalidArgumentException $e) {
+            $this->addFlash('error', 'Champs invalides. Email et/ou Pseudo vide');
+        }
 
         if ($userForm->isSubmitted() && $userForm->isValid()) {
             if ($userForm->get('image')->getData()) {

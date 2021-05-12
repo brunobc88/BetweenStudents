@@ -18,10 +18,10 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class SortieFormType extends AbstractType
 {
@@ -69,32 +69,30 @@ class SortieFormType extends AbstractType
                 'required' => false,
                 'widget' => 'single_text',
                 'constraints' => [
-                    new NotNull([
-                        'message' => 'Veuillez renseigner la date de la sortie',
-                    ]),
                     new NotBlank([
                         'message' => 'Veuillez renseigner la date de la sortie',
                     ]),
                     new GreaterThanOrEqual([
                         'value' => "tomorrow",
-                        'message' => 'La date de la sortie doit débutée après le {{ compared_value }}',
+                        'message' => 'La date de la sortie doit débutée au minimum demain',
                     ]),
                 ],
             ])
             ->add('dateClotureInscription', DateTimeType::class, [
-                'label' => 'Date de cloture des inscriptions',
+                'label' => 'Date de clôture des inscriptions',
                 'required' => false,
                 'widget' => 'single_text',
                 'constraints' => [
-                    new NotNull([
-                        'message' => 'Veuillez renseigner la date de clotûre des inscriptions',
-                    ]),
                     new NotBlank([
                         'message' => 'Veuillez renseigner la date de clotûre des inscriptions',
                     ]),
                     new GreaterThanOrEqual([
                         'value' => "tomorrow",
-                        'message' => 'La date de clotûre des inscriptions doit débutée après le {{ compared_value }}',
+                        'message' => 'La date de clôture des inscriptions doit débutée au minimum demain',
+                    ]),
+                    new Expression([
+                        'expression' => 'value <= this.getParent()["dateDebut"].getData()',
+                        'message' => 'La date de clôture des inscriptions doit être avant ou égal à la date de la sortie',
                     ]),
                 ],
             ])

@@ -21,6 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
@@ -105,7 +106,12 @@ class SortieController extends AbstractController
     {
         $sortie = new Sortie();
         $sortieForm = $this->createForm(SortieFormType::class, $sortie);
-        $sortieForm = $sortieForm->handleRequest($request);
+        try {
+            $sortieForm = $sortieForm->handleRequest($request);
+        }
+        catch (InvalidArgumentException $e) {
+            $this->addFlash('error', 'Champs invalides. Date de la sortie et/ou Date de clôture des inscriptions vide');
+        }
 
         if ($sortieForm->isSubmitted() && $sortieForm->isValid()) {
 
@@ -139,7 +145,6 @@ class SortieController extends AbstractController
             $this->addFlash('success', 'La sortie a bien été '.$reponse);
             return $this->redirectToRoute('app_sortie');
         }
-        // TODO gérer erreur losque dateDebut ou DateCloture est null ou DateCloture après dateDebut. Constraints ne marche pas
 
         if ($request->get('ajax') && $request->get('sortie_form')['codePostal']) {
             $codePostal = $request->get('sortie_form')['codePostal'];
@@ -208,7 +213,6 @@ class SortieController extends AbstractController
             $this->addFlash('success', 'La sortie a bien été modifiée et '.$reponse);
             return $this->redirectToRoute('app_sortie_detail', ["id" => $sortie->getId()]);
         }
-        // TODO gérer erreur losque dateDebut ou DateCloture est null ou DateCloture après dateDebut. Constraints ne marche pas
 
         if ($request->get('ajax') && $request->get('sortie_form')['codePostal']) {
             $codePostal = $request->get('sortie_form')['codePostal'];
