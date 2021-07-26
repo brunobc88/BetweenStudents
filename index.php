@@ -1,2 +1,2 @@
 <?php 
-header('Location: http://noams88.fr/BetweenStudents/public/');
+header('Location: https://www.betweenstudents.noams88.fr/');
