@@ -69,7 +69,13 @@ function requeteAjaxGet(selectorElementAction, typeAction, selectorReponse, modi
         event.preventDefault();
 
         const Params = new URLSearchParams();
-        Params.append(document.querySelector(selectorElementAction).name, document.querySelector(selectorElementAction).value);
+        const element = document.querySelector(selectorElementAction);
+        if (element.value.trim()) {
+            Params.append(element.name, element.value.trim());
+        }
+        else {
+            throw 'Les champs sont obligatoires';
+        }
 
         const Url = new URL(window.location.href);
 

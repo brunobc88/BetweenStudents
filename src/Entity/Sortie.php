@@ -160,7 +160,7 @@ class Sortie
         return $this->dateDebut;
     }
 
-    public function setDateDebut(DateTimeInterface $dateDebut): self
+    public function setDateDebut(?DateTimeInterface $dateDebut): self
     {
         $this->dateDebut = $dateDebut;
 
@@ -172,7 +172,7 @@ class Sortie
         return $this->dateClotureInscription;
     }
 
-    public function setDateClotureInscription(DateTimeInterface $dateClotureInscription): self
+    public function setDateClotureInscription(?DateTimeInterface $dateClotureInscription): self
     {
         $this->dateClotureInscription = $dateClotureInscription;
 
